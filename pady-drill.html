@@ -293,6 +293,29 @@ input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border
 .lab{display:block;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.09em;
   text-transform:uppercase;color:var(--ink-3);font-weight:600;margin-bottom:3px}
 .why{margin-top:12px;font-size:15px;color:var(--ink-2)}
+.yours{margin-top:6px;font-size:14.5px;color:var(--ink-2)}
+.yours .f{font-family:"JetBrains Mono",monospace;color:var(--bad);text-decoration:line-through;text-decoration-thickness:1px}
+.parbtn{margin-top:16px;min-height:44px;background:none;border:1.5px solid var(--line);border-radius:var(--radius);padding:0 16px;
+  font-family:"Source Sans 3",sans-serif;font-weight:600;font-size:15px;color:var(--ink-2);cursor:pointer}
+.parbtn:hover{border-color:var(--accent);color:var(--accent)}
+.parbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
+.par{margin-top:10px}
+.par h4{margin:16px 0 6px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
+.parwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.par table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
+.par table + .parwrap{margin-top:8px}
+.par caption{text-align:left;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);padding:6px 0 4px}
+.par th,.par td{border:1px solid var(--line);padding:6px 9px;text-align:left;vertical-align:top;line-height:1.35}
+.par th{font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);font-weight:600;background:var(--card-2)}
+.par td.lab{font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.par tr.hi td{background:var(--accent-soft)}
+.par tr.hi td.lab,.par td.tgt{color:var(--accent);font-weight:700}
+.par tr.bad td{background:var(--bad-soft)}
+.par tr.bad td.lab{color:var(--bad);font-weight:700}
+.par th.hi,.par td.hi{background:var(--accent-soft)} .par th.hi{color:var(--accent)}
+.par th.bad,.par td.bad{background:var(--bad-soft)} .par th.bad{color:var(--bad)}
+.par .pn{margin-top:8px;font-size:14px;color:var(--ink-2)}
+@media (max-width:600px){.par table{font-size:13px}.par th,.par td{padding:5px 6px}}
 .errs{margin-top:12px;font-size:14.5px}
 .errs ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
 .errs li{display:grid;grid-template-columns:minmax(72px,auto) 1fr;gap:12px;align-items:baseline;color:var(--ink-2)}
@@ -446,9 +469,12 @@ kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(-
         <div class="fb-h" id="fbH"></div>
         <div class="sol" id="fbSol"></div>
         <div class="alt hidden" id="fbAlt"></div>
+        <div class="yours hidden" id="fbYours"></div>
         <div class="rule" id="fbRule"></div>
         <div class="why hidden" id="fbWhy"></div>
         <div class="errs hidden" id="fbErrs"></div>
+        <button type="button" class="parbtn hidden" id="parBtn" aria-expanded="false">Ukázat tabulku</button>
+        <div class="par hidden" id="parBox"></div>
         <div class="next">
           <button id="nextBtn">Další →</button>
         </div>
@@ -3123,6 +3149,223 @@ const MODE_DESC = {
 };
 
 
+/* ═══ paradigm cards — CKZK1 declension tables shown under a mistake (Ukázat tabulku) ═══
+   k:'decl'  rows = 7 cases (r, optional rp = plural table), cols = column labels
+   k:'cols'  rows = words, columns = cases (cols = case keys)
+   k:'table' free table (head + r)                                                     */
+const PARADIGMS = {
+student:{t:'Maskulinum animatum, tvrdé — student',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['student','studenti'],gen:['studenta','studentů'],dat:['studentovi (studentu)','studentům'],acc:['studenta','studenty'],voc:['studente!','studenti!'],loc:['(o) studentovi (studentu)','(o) studentech'],ins:['studentem','studenty']},
+  n:'Ma tvrdé: bratr, kamarád, soused, pán, syn, doktor, Petr. Vokativ: pane!, kluku! (‑k/‑h/‑ch/‑g → ‑u), bratře!, Petře! (r → ř). Nominativ pl. mění souhlásku: kluci (k → c), Češi (ch → š), doktoři (r → ř), Američané (‑an → ‑ané), pánové, synové; člověk → lidé. Pohyblivé ‑e‑: pes → psa, Marek → Marka, Karel → Karla.',
+  en:'Hard Ma: bratr, kamarád, soused, pán, syn, doktor, Petr. Vocative: pane!, kluku! (‑k/‑h/‑ch/‑g → ‑u), bratře!, Petře! (r → ř). Nom. pl. changes the consonant: kluci, Češi, doktoři, Američané, pánové, synové; člověk → lidé. Fleeting ‑e‑: pes → psa, Marek → Marka.'},
+muz:{t:'Maskulinum animatum, měkké — muž',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['muž','muži'],gen:['muže','mužů'],dat:['muži (mužovi)','mužům'],acc:['muže','muže'],voc:['muži!','muži!'],loc:['(o) muži (mužovi)','(o) mužích'],ins:['mužem','muži']},
+  n:'Ma měkké (‑ž ‑š ‑č ‑ř ‑c ‑j ‑tel): lékař, učitel, řidič, cizinec, Tomáš, Ondřej, Francouz. Vokativ ‑i: Tomáši!, učiteli!; ‑ec → ‑če: chlapče!, otče!, Němče! Nominativ pl.: lékaři, ale učitelé, přátelé (‑tel → ‑é). Pohyblivé ‑e‑: otec → otce, herec → herce.',
+  en:'Soft Ma (‑ž ‑š ‑č ‑ř ‑c ‑j ‑tel): lékař, učitel, řidič, cizinec, Tomáš, Ondřej, Francouz. Vocative ‑i: Tomáši!, učiteli!; ‑ec → ‑če: chlapče!, otče!, Němče! Nom. pl.: lékaři, but učitelé, přátelé (‑tel → ‑é). Fleeting ‑e‑: otec → otce, herec → herce.'},
+kolega:{t:'Maskulinum animatum na ‑a — kolega',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['kolega','kolegové'],gen:['kolegy','kolegů'],dat:['kolegovi','kolegům'],acc:['kolegu','kolegy'],voc:['kolego!','kolegové!'],loc:['(o) kolegovi','(o) kolezích'],ins:['kolegou','kolegy']},
+  n:'Muž s koncovkou ‑a: táta, Honza, Kuba, turista, policista, příjmení Svoboda, Kučera. Singulár jako femininum káva (kromě dativu/lokálu ‑ovi), plurál jako maskulinum: kolegové, turisté, policisté.',
+  en:'A man ending in ‑a: táta, Honza, Kuba, turista, policista, surnames Svoboda, Kučera. Singular like the feminine káva (except dative/locative ‑ovi), plural masculine: kolegové, turisté, policisté.'},
+obchod:{t:'Maskulinum inanimatum, tvrdé — obchod',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['obchod','obchody'],gen:['obchodu','obchodů'],dat:['obchodu','obchodům'],acc:['obchod','obchody'],voc:['obchode!','obchody!'],loc:['(v) obchodě (obchodu)','(v) obchodech'],ins:['obchodem','obchody']},
+  n:'Mi tvrdé: dům, stůl, byt, vlak, hotel, park. Akuzativ = nominativ. Genitiv ‑a u některých: les → lesa, chléb → chleba, sýr → sýra, večer → večera, měsíce leden → ledna. Lokál ‑u po k/h/ch/g/r a u cizích slov: v parku, v hotelu, na hradě/hradu. Krácení: dům → domu, stůl → stolu; den → dne, dny; týden → týdne.',
+  en:'Hard Mi: dům, stůl, byt, vlak, hotel, park. Accusative = nominative. Genitive ‑a for some: les → lesa, chléb → chleba, sýr → sýra, večer → večera, months leden → ledna. Locative ‑u after k/h/ch/g/r and in loanwords: v parku, v hotelu, na hradě/hradu. Shortening: dům → domu, stůl → stolu; den → dne, dny; týden → týdne.'},
+pokoj:{t:'Maskulinum inanimatum, měkké — pokoj',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['pokoj','pokoje'],gen:['pokoje','pokojů'],dat:['pokoji','pokojům'],acc:['pokoj','pokoje'],voc:['pokoji!','pokoje!'],loc:['(v) pokoji','(v) pokojích'],ins:['pokojem','pokoji']},
+  n:'Mi měkké (‑j ‑č ‑ž ‑š ‑ř ‑c): čaj, klíč, počítač, nůž (nože — ů se krátí). Akuzativ = nominativ. Pozor: koncert, hotel, kostel jsou tvrdé.',
+  en:'Soft Mi (‑j ‑č ‑ž ‑š ‑ř ‑c): čaj, klíč, počítač, nůž (nože — ů shortens). Accusative = nominative. Note: koncert, hotel, kostel are hard.'},
+kava:{t:'Femininum na ‑a — káva',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['káva','kávy'],gen:['kávy','káv'],dat:['kávě','kávám'],acc:['kávu','kávy'],voc:['kávo!','kávy!'],loc:['(o) kávě','(o) kávách'],ins:['kávou','kávami']},
+  n:'F tvrdé: žena, škola, sestra, Praha, Jana. Dativ/lokál ‑ě/‑e se změnou souhlásky: k → c (banka → bance), h → z (Praha → Praze), g → z, r → ř (sestra → sestře), ch → š; po d, t, n se píše ‑ě (teta → tetě), jinak ‑e (škola → škole). Genitiv pl. nulová koncovka, často s vloženým ‑e‑: sestra → sester, holka → holek, studentka → studentek.',
+  en:'Hard F: žena, škola, sestra, Praha, Jana. Dative/locative ‑ě/‑e with a consonant change: k → c (banka → bance), h → z (Praha → Praze), g → z, r → ř (sestra → sestře), ch → š; after d, t, n write ‑ě (teta → tetě), otherwise ‑e (škola → škole). Genitive pl. zero ending, often with an inserted ‑e‑: sestra → sester, holka → holek, studentka → studentek.'},
+restaurace:{t:'Femininum na ‑e / ‑ě — restaurace',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['restaurace','restaurace'],gen:['restaurace','restaurací'],dat:['restauraci','restauracím'],acc:['restauraci','restaurace'],voc:['restaurace!','restaurace!'],loc:['(v) restauraci','(v) restauracích'],ins:['restaurací','restauracemi']},
+  n:'F měkké: ulice, práce, kolegyně, kuchyně, židle, policie. Jména na ‑ie: Lucie → Lucii (dativ, akuzativ, lokál), Lucií (instrumentál). Vokativ = nominativ: Lucie!, kolegyně!',
+  en:'Soft F: ulice, práce, kolegyně, kuchyně, židle, policie. Names in ‑ie: Lucie → Lucii (dative, accusative, locative), Lucií (instrumental). Vocative = nominative: Lucie!, kolegyně!'},
+kancelar:{t:'Femininum na souhlásku — kancelář',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['kancelář','kanceláře'],gen:['kanceláře','kanceláří'],dat:['kanceláři','kancelářím'],acc:['kancelář','kanceláře'],voc:['kanceláři!','kanceláře!'],loc:['(v) kanceláři','(v) kancelářích'],ins:['kanceláří','kancelářemi']},
+  n:'F na měkkou souhlásku: postel, tramvaj, skříň, loď (lodí), Vídeň. Akuzativ = nominativ; genitiv ‑e, instrumentál ‑í. Rod poznáš jen ze slovníku — vypadá jako maskulinum.',
+  en:'F ending in a soft consonant: postel, tramvaj, skříň, loď (lodí), Vídeň. Accusative = nominative; genitive ‑e, instrumental ‑í. The gender must be learned — the word looks masculine.'},
+mistnost:{t:'Femininum na ‑ost (kost) — místnost',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['místnost','místnosti'],gen:['místnosti','místností'],dat:['místnosti','místnostem'],acc:['místnost','místnosti'],voc:['místnosti!','místnosti!'],loc:['(v) místnosti','(v) místnostech'],ins:['místností','místnostmi']},
+  n:'Vzor kost: věc (věci, věcí), pomoc (pomoci, s pomocí), noc, radost. Genitiv sg. ‑i (ne ‑e jako kancelář); v plurálu dativ ‑em, lokál ‑ech, instrumentál ‑mi.',
+  en:'The kost type: věc (věci, věcí), pomoc (pomoci, s pomocí), noc, radost. Genitive sg. ‑i (not ‑e like kancelář); plural dative ‑em, locative ‑ech, instrumental ‑mi.'},
+mesto:{t:'Neutrum na ‑o — město',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['město','města'],gen:['města','měst'],dat:['městu','městům'],acc:['město','města'],voc:['město!','města!'],loc:['(ve) městě (městu)','(ve) městech'],ins:['městem','městy']},
+  n:'N tvrdé: auto, okno, pivo, kino, Brno. Akuzativ = nominativ. Lokál ‑ě/‑e: v autě, v kině, v Brně; ‑u po k/h/ch/g: v Německu, na Slovensku, v Česku. Genitiv pl. nulová koncovka: okno → oken, jablko → jablek, město → měst.',
+  en:'Hard N: auto, okno, pivo, kino, Brno. Accusative = nominative. Locative ‑ě/‑e: v autě, v kině, v Brně; ‑u after k/h/ch/g: v Německu, na Slovensku, v Česku. Genitive pl. zero ending: okno → oken, jablko → jablek, město → měst.'},
+more:{t:'Neutrum na ‑e / ‑ě — moře',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['moře','moře'],gen:['moře','moří'],dat:['moři','mořím'],acc:['moře','moře'],voc:['moře!','moře!'],loc:['(v) moři','(v) mořích'],ins:['mořem','moři']},
+  n:'N měkké: letiště (na letišti), pole, srdce. Nominativ = akuzativ = vokativ = genitiv sg.',
+  en:'Soft N: letiště (na letišti), pole, srdce. Nominative = accusative = vocative = genitive sg.'},
+nadrazi:{t:'Neutrum na ‑í — nádraží',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['nádraží','nádraží'],gen:['nádraží','nádraží'],dat:['nádraží','nádražím'],acc:['nádraží','nádraží'],voc:['nádraží!','nádraží!'],loc:['(na) nádraží','(na) nádražích'],ins:['nádražím','nádražími']},
+  n:'N na ‑í se v singuláru nemění, jen instrumentál má ‑ím: náměstí, počasí, století, pondělí. Pozor: paní je femininum a Jiří je muž (skloňuje se jako měkké adjektivum).',
+  en:'N in ‑í does not change in the singular; only the instrumental takes ‑ím: náměstí, počasí, století, pondělí. Note: paní is feminine and Jiří is a man (declined like a soft adjective).'},
+muzeum:{t:'Neutrum na ‑um — muzeum',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['muzeum','muzea'],gen:['muzea','muzeí'],dat:['muzeu','muzeím'],acc:['muzeum','muzea'],voc:['muzeum!','muzea!'],loc:['(v) muzeu','(v) muzeích'],ins:['muzeem','muzei']},
+  n:'Latinská slova na ‑um: centrum (v centru), datum, gymnázium (gymnázia). ‑um odpadá a dál se skloňuje jako tvrdé neutrum.',
+  en:'Latin words in ‑um: centrum (v centru), datum, gymnázium (gymnázia). ‑um drops and the word continues like a hard neuter.'},
+irreg:{t:'Nepravidelné: dítě / děti · člověk / lidé · oči · ruce',k:'decl',cols:['dítě (sg.)','děti (pl.)','lidé (pl.)','oči / ruce (pl.)'],
+  r:{nom:['dítě','děti','lidé (lidi)','oči / ruce'],gen:['dítěte','dětí','lidí','očí / rukou'],dat:['dítěti','dětem','lidem','očím / rukám'],acc:['dítě','děti','lidi','oči / ruce'],voc:['dítě!','děti!','lidi!','—'],loc:['(o) dítěti','(o) dětech','(o) lidech','(v) očích / (v) rukou, rukách'],ins:['dítětem','dětmi','lidmi','očima / rukama']},
+  n:'dítě je v singuláru neutrum (malé dítě), děti se v plurálu chovají jako femininum (malé děti); lidé jsou Ma (mladí lidé). Párové části těla mají duálové tvary: očima, rukama, nohama, ušima; genitiv očí, rukou, nohou, uší.',
+  en:'dítě is neuter in the singular (malé dítě), děti behaves as feminine in the plural (malé děti); lidé is Ma (mladí lidé). Paired body parts keep dual forms: očima, rukama, nohama, ušima; genitive očí, rukou, nohou, uší.'},
+plur:{t:'Pomnožná slova (jen plurál)',k:'decl',cols:['dveře','peníze','Vánoce','kalhoty','brýle'],
+  r:{nom:['dveře','peníze','Vánoce','kalhoty','brýle'],gen:['dveří','peněz','Vánoc','kalhot','brýlí'],dat:['dveřím','penězům','Vánocům','kalhotám','brýlím'],acc:['dveře','peníze','Vánoce','kalhoty','brýle'],voc:['—','—','—','—','—'],loc:['(ve) dveřích','(v) penězích','(o) Vánocích','(v) kalhotách','(v) brýlích'],ins:['dveřmi','penězi','Vánocemi (Vánoci)','kalhotami','brýlemi']},
+  n:'Slova jen v plurálu: dveře, peníze, Vánoce, kalhoty, brýle, hodinky, noviny, prázdniny, narozeniny. Sloveso i adjektivum v plurálu: Dveře jsou otevřené. Kolik stojí ty kalhoty?',
+  en:'Plural-only nouns: dveře, peníze, Vánoce, kalhoty, brýle, hodinky, noviny, prázdniny, narozeniny. Verb and adjective in the plural: Dveře jsou otevřené. Kolik stojí ty kalhoty?'},
+pani:{t:'paní — nesklonné v singuláru',k:'decl',cols:['singulár','plurál'],
+  r:{nom:['paní','paní'],gen:['paní','paní'],dat:['paní','paním'],acc:['paní','paní'],voc:['paní!','paní!'],loc:['(o) paní','(o) paních'],ins:['paní','paními']},
+  n:'paní se v singuláru nemění: pro paní Novákovou, s paní učitelkou. Titul pan se skloňuje: pane doktore!, pro pana Nováka, s panem Novákem; slečna jako káva: slečno!',
+  en:'paní never changes in the singular: pro paní Novákovou, s paní učitelkou. The title pan declines: pane doktore!, pro pana Nováka, s panem Novákem; slečna follows káva: slečno!'},
+'adj-hard':{t:'Tvrdé adjektivum — dobrý',k:'decl',cols:['Ma','Mi','F','N'],
+  r:{nom:['dobrý','dobrý','dobrá','dobré'],gen:['dobrého','dobrého','dobré','dobrého'],dat:['dobrému','dobrému','dobré','dobrému'],acc:['dobrého','dobrý','dobrou','dobré'],voc:['dobrý!','dobrý!','dobrá!','dobré!'],loc:['dobrém','dobrém','dobré','dobrém'],ins:['dobrým','dobrým','dobrou','dobrým']},
+  rp:{nom:['dobří','dobré','dobré','dobrá'],gen:['dobrých','dobrých','dobrých','dobrých'],dat:['dobrým','dobrým','dobrým','dobrým'],acc:['dobré','dobré','dobré','dobrá'],voc:['dobří!','dobré!','dobré!','dobrá!'],loc:['dobrých','dobrých','dobrých','dobrých'],ins:['dobrými','dobrými','dobrými','dobrými']},
+  n:'Stejně: mladý, starý, nový, velký, malý, český, hezký. Nominativ pl. Ma mění souhlásku: dobrý → dobří, mladý → mladí, český → čeští, velký → velcí, hezký → hezcí. Adjektivní příjmení a slova: pan Nový (pane Nový!, pana Nového), paní Nováková (paní Novákové, s paní Novákovou), dovolená (na dovolené, z dovolené).',
+  en:'Same: mladý, starý, nový, velký, malý, český, hezký. Nom. pl. Ma changes the consonant: dobrý → dobří, mladý → mladí, český → čeští, velký → velcí, hezký → hezcí. Adjectival surnames and nouns: pan Nový (pane Nový!, pana Nového), paní Nováková (paní Novákové, s paní Novákovou), dovolená (na dovolené, z dovolené).'},
+'adj-soft':{t:'Měkké adjektivum — moderní',k:'decl',cols:['Ma','Mi','F','N'],
+  r:{nom:['moderní','moderní','moderní','moderní'],gen:['moderního','moderního','moderní','moderního'],dat:['modernímu','modernímu','moderní','modernímu'],acc:['moderního','moderní','moderní','moderní'],voc:['moderní!','moderní!','moderní!','moderní!'],loc:['moderním','moderním','moderní','moderním'],ins:['moderním','moderním','moderní','moderním']},
+  rp:{nom:['moderní','moderní','moderní','moderní'],gen:['moderních','moderních','moderních','moderních'],dat:['moderním','moderním','moderním','moderním'],acc:['moderní','moderní','moderní','moderní'],voc:['moderní!','moderní!','moderní!','moderní!'],loc:['moderních','moderních','moderních','moderních'],ins:['moderními','moderními','moderními','moderními']},
+  n:'Stejně: hlavní, první, poslední, cizí, její. Femininum se v singuláru nemění vůbec. Tak se skloňují i jména a slova na ‑í: Jiří (Jiřího, Jiřímu, s Jiřím), pan Krejčí, cestující, vrchní (pane vrchní!).',
+  en:'Same: hlavní, první, poslední, cizí, její. The feminine does not change at all in the singular. Names and nouns in ‑í decline the same way: Jiří (Jiřího, Jiřímu, s Jiřím), pan Krejčí, cestující, vrchní (pane vrchní!).'},
+ten:{t:'Ukazovací zájmeno — ten, ta, to',k:'decl',cols:['Ma','Mi','F','N'],
+  r:{nom:['ten','ten','ta','to'],gen:['toho','toho','té','toho'],dat:['tomu','tomu','té','tomu'],acc:['toho','ten','tu','to'],voc:['—','—','—','—'],loc:['tom','tom','té','tom'],ins:['tím','tím','tou','tím']},
+  rp:{nom:['ti','ty','ty','ta'],gen:['těch','těch','těch','těch'],dat:['těm','těm','těm','těm'],acc:['ty','ty','ty','ta'],voc:['—','—','—','—'],loc:['těch','těch','těch','těch'],ins:['těmi','těmi','těmi','těmi']},
+  n:'tento, tenhle, tamten se skloňují stejně (tohoto, tomuto, tuto, tímto…).',
+  en:'tento, tenhle, tamten decline the same way (tohoto, tomuto, tuto, tímto…).'},
+muj:{t:'Přivlastňovací zájmeno — můj, moje (tvůj, svůj stejně)',k:'decl',cols:['Ma','Mi','F','N'],
+  r:{nom:['můj','můj','moje (má)','moje (mé)'],gen:['mého','mého','mé (mojí)','mého'],dat:['mému','mému','mé (mojí)','mému'],acc:['mého','můj','moji (mou)','moje (mé)'],voc:['můj!','můj!','moje!','moje!'],loc:['mém','mém','mé (mojí)','mém'],ins:['mým','mým','mou (mojí)','mým']},
+  rp:{nom:['moji (mí)','moje (mé)','moje (mé)','moje (má)'],gen:['mých','mých','mých','mých'],dat:['mým','mým','mým','mým'],acc:['moje (mé)','moje (mé)','moje (mé)','moje (má)'],voc:['moji!','moje!','moje!','moje!'],loc:['mých','mých','mých','mých'],ins:['mými','mými','mými','mými']},
+  n:'tvůj a svůj stejně (tvého, tvé, tvou…). Krátké tvary má, mé, mou jsou spisovnější, moje, mojí hovorovější — obojí je správně.',
+  en:'tvůj and svůj decline the same way (tvého, tvé, tvou…). The short forms má, mé, mou are more formal, moje, mojí more colloquial — both are correct.'},
+nas:{t:'Přivlastňovací zájmeno — náš, naše (váš stejně)',k:'decl',cols:['Ma','Mi','F','N'],
+  r:{nom:['náš','náš','naše','naše'],gen:['našeho','našeho','naší','našeho'],dat:['našemu','našemu','naší','našemu'],acc:['našeho','náš','naši','naše'],voc:['náš!','náš!','naše!','naše!'],loc:['našem','našem','naší','našem'],ins:['naším','naším','naší','naším']},
+  rp:{nom:['naši','naše','naše','naše'],gen:['našich','našich','našich','našich'],dat:['našim','našim','našim','našim'],acc:['naše','naše','naše','naše'],voc:['naši!','naše!','naše!','naše!'],loc:['našich','našich','našich','našich'],ins:['našimi','našimi','našimi','našimi']},
+  n:'váš stejně (vašeho, vaší, vaším…). jeho a jejich se nemění; její se skloňuje jako měkké adjektivum (jejího, její, jejím).',
+  en:'váš declines the same way (vašeho, vaší, vaším…). jeho and jejich never change; její declines like a soft adjective (jejího, její, jejím).'},
+pron:{t:'Osobní zájmena — krátký tvar · dlouhý tvar · po předložce',k:'cols',cols:['nom','gen','dat','acc','loc','ins'],
+  r:[['já','já','mě (mne)','mi (mně)','mě (mne)','(o) mně','mnou'],
+     ['ty','ty','tě (tebe)','ti (tobě)','tě (tebe)','(o) tobě','tebou'],
+     ['on / ono','on','ho · jeho · bez něho, něj','mu · jemu · k němu','ho, je · jeho · na něho, něj','(o) něm','jím · s ním'],
+     ['ona','ona','jí · bez ní','jí · k ní','ji · na ni','(o) ní','jí · s ní'],
+     ['my','my','nás','nám','nás','(o) nás','námi'],
+     ['vy','vy','vás','vám','vás','(o) vás','vámi'],
+     ['oni','oni','jich · bez nich','jim · k nim','je · na ně','(o) nich','jimi · s nimi'],
+     ['kdo','kdo','koho','komu','koho','(o) kom','kým'],
+     ['co','co','čeho','čemu','co','(o) čem','čím']],
+  n:'Krátké tvary (mě, ti, ho, jí, je) stojí na 2. místě ve větě; dlouhé (mne, tobě, jeho, jemu) na začátku nebo s důrazem; po předložce vždy tvary s n‑: bez něho, k ní, na ně, o nich, s nimi. Pozor: ji (akuzativ) × jí (genitiv, dativ, instrumentál); mě (akuzativ, genitiv) × mně (dativ, lokál).',
+  en:'Short forms (mě, ti, ho, jí, je) sit in second position in the sentence; long forms (mne, tobě, jeho, jemu) start a sentence or carry stress; after a preposition always the n‑ forms: bez něho, k ní, na ně, o nich, s nimi. Note: ji (accusative) × jí (genitive, dative, instrumental); mě (accusative, genitive) × mně (dative, locative).'},
+'prep-gen':{t:'Předložky a výrazy s genitivem',k:'table',head:['předložka / výraz','význam','příklad'],
+  r:[['do','kam? dovnitř · do kdy?','do školy · do Prahy · do pátku'],['z / ze','odkud? z vnitřku, z povrchu','z Prahy · ze školy · ze stolu'],['od','od koho? odkud? od kdy?','od kamaráda · od nádraží · od rána'],['u','u koho? kde blízko?','u lékaře · u okna · u Petra'],['bez','bez čeho?','bez cukru · bez tebe'],['vedle · kolem · blízko · uprostřed','kde?','vedle banky · kolem parku · blízko centra · uprostřed města'],['podle · během · kromě · místo','','podle mapy · během týdne · kromě Petra · místo kávy'],['hodně · málo · trochu · kilo · sklenice · láhev','množství + genitiv','hodně práce · trochu vody · kilo jablek · sklenice vína'],['5, 6, 7… · kolik · několik · pár','číslovky 5+ → genitiv plurálu','pět studentů · kolik korun · pár dní']],
+  n:'Číslovky 2, 3, 4 mají nominativ plurálu (dva studenti, tři kávy), od pěti genitiv plurálu (pět studentů, šest káv).',
+  en:'The numerals 2, 3, 4 take the nominative plural (dva studenti, tři kávy); from five on, the genitive plural (pět studentů, šest káv).'},
+'prep-acc':{t:'Předložky s akuzativem',k:'table',head:['předložka','význam','příklad'],
+  r:[['na','kam? (pohyb) · na koho? na co?','na poštu · na koncert · čekat na kamaráda · těšit se na víkend'],['pro','pro koho?','pro tebe · dárek pro sestru'],['za','za co? (platba) · kam? za něco','zaplatit za kávu · za hodinu · jít za dům'],['přes','přes co? napříč','přes ulici · přes most · přes týden'],['o','o kolik?','o pět minut · o rok starší'],['pod · nad · před · za · mezi','kam? (pohyb) → akuzativ','dát pod stůl · pověsit nad postel · jít před dům'],['v / ve','kdy? dny v týdnu','v pondělí · ve středu · v sobotu']],
+  n:'Stejné předložky s lokálem/instrumentálem odpovídají na otázku kde?: na poště, pod stolem, před domem. Kam? → akuzativ, kde? → lokál / instrumentál.',
+  en:'The same prepositions with the locative/instrumental answer where?: na poště, pod stolem, před domem. Where to? → accusative, where? → locative / instrumental.'},
+'prep-loc':{t:'Předložky s lokálem',k:'table',head:['předložka','význam','příklad'],
+  r:[['v / ve','kde? uvnitř · kdy? měsíce, roky','v Praze · ve škole · v lednu · v roce 2020 · v létě'],['na','kde? na povrchu, instituce, akce','na stole · na poště · na univerzitě · na koncertě · na jaře'],['o','o čem? o kom? · kdy? o víkendu','mluvit o práci · o Vánocích · o víkendu'],['při','při čem?','při práci · při obědě'],['po','po čem? (čas, pohyb po povrchu)','po obědě · po škole · po Praze · po ulici']],
+  n:'Lokál nikdy nestojí bez předložky. Kdy? v zimě, v létě, na jaře, na podzim (akuzativ!), v pondělí (akuzativ!), o víkendu, po obědě.',
+  en:'The locative never appears without a preposition. When? v zimě, v létě, na jaře, na podzim (accusative!), v pondělí (accusative!), o víkendu, po obědě.'},
+'prep-dat':{t:'Předložky s dativem',k:'table',head:['předložka','význam','příklad'],
+  r:[['k / ke','ke komu? k čemu? (směr, blízko)','k lékaři · k oknu · ke kamarádovi · ke mně'],['díky','díky komu? čemu? (pozitivní příčina)','díky tobě · díky počasí'],['kvůli','kvůli komu? čemu? (příčina, často negativní)','kvůli dešti · kvůli práci'],['proti · naproti','proti komu? čemu? · naproti čemu?','proti nám · naproti bance']],
+  n:'Dativ bez předložky po slovesech: dát, říct, pomoct, rozumět, volat, věřit, děkovat, gratulovat, líbit se, chutnat, patřit; a po je mi, chybí mi, daří se mi.',
+  en:'Dative without a preposition after verbs: dát, říct, pomoct, rozumět, volat, věřit, děkovat, gratulovat, líbit se, chutnat, patřit; and after je mi, chybí mi, daří se mi.'},
+'prep-ins':{t:'Předložky s instrumentálem',k:'table',head:['předložka','význam','příklad'],
+  r:[['s / se','s kým? s čím? (doprovod)','s kamarádem · s kávou · se sestrou · se mnou'],['pod','kde? pod něčím','pod stolem · pod mostem'],['nad','kde? nad něčím','nad postelí · nad městem'],['před','kde? před něčím · kdy? před chvílí','před domem · před školou · před rokem'],['za','kde? za něčím','za domem · za dveřmi · za řekou'],['mezi','kde? mezi','mezi stolem a oknem · mezi Prahou a Brnem']],
+  n:'Bez předložky: prostředek a nástroj (jedu autem, píšu perem, platím kartou), profese po být / stát se (je učitelem) a slovesa zabývat se, stát se. Kam? s pohybem → akuzativ: dát pod stůl.',
+  en:'Without a preposition: means and instrument (jedu autem, píšu perem, platím kartou), a profession after být / stát se (je učitelem) and the verbs zabývat se, stát se. Where to? with motion → accusative: dát pod stůl.'},
+'kde-kam':{t:'Kde? × kam? × odkud?',k:'table',head:['','kde? — lokál / instrumentál','kam? — akuzativ / genitiv','odkud? — genitiv'],
+  r:[['pošta','na poště','na poštu','z pošty'],['Praha','v Praze','do Prahy','z Prahy'],['stůl','na stole','na stůl','ze stolu'],['skříň','ve skříni','do skříně','ze skříně'],['pod stůl','pod stolem','pod stůl','zpod stolu'],['lékař','u lékaře','k lékaři','od lékaře'],['dům','doma','domů','z domova']],
+  n:'Kde? = klid (lokál po v, na; instrumentál po pod, nad, před, za, mezi). Kam? = pohyb (akuzativ po na, pod, nad, před, za, mezi; genitiv po do, k + dativ). Odkud? = genitiv po z, od.',
+  en:'Where? = rest (locative after v, na; instrumental after pod, nad, před, za, mezi). Where to? = motion (accusative after na, pod, nad, před, za, mezi; genitive after do, k + dative). From where? = genitive after z, od.'},
+rod:{t:'Rod podle koncovky',k:'table',head:['koncovka','rod','příklady','výjimky'],
+  r:[['‑a','F','žena, káva, škola, Praha','Ma: táta, kolega, turista, Honza'],['souhláska','M (Ma / Mi)','pán, student · stůl, dům','F: kancelář, postel, tramvaj, věc, noc, skříň'],['‑o','N','auto, město, pivo, kino','—'],['‑e / ‑ě','F','restaurace, ulice, kolegyně','N: moře, letiště, pole, dítě'],['‑í','N','nádraží, náměstí, počasí','F: paní · M: Jiří, Krejčí'],['‑um','N','muzeum, centrum, datum','—']],
+  n:'Rod určuje koncovky ve všech pádech, proto se učte každé slovo s jeho rodem (ta postel, ten kolega, to letiště).',
+  en:'Gender decides the endings in every case, so learn each word with its gender (ta postel, ten kolega, to letiště).'}
+};
+
+/* which card belongs to which word — head nouns of the item cue (w) */
+const PAT_WORDS = {
+  student:'Adam Američan Angličan bratr Čech číšník člověk David dědeček doktor Dvořák Filip Hájek Havel Horák host inženýr Ital Jakub Jan kamarád Karel kluk Král Maďar manžel Marek Martin Michal Novák pán pan Pavel pes Petr Polák právník profesor Radek Rakušan Rus Slovák soused student syn Španěl Turek Václav Vojtěch Zdeněk',
+  muz:'Aleš Andrej cizinec Francouz herec chlapec Jonáš Kovář kuchař lékař Lukáš Matěj Mikuláš Miloš muž Němec Ondřej otec prodavač přítel rodič ředitel řidič Tomáš učitel zubař',
+  kolega:'Honza Jirka kolega Kuba Kučera Ondra policista Procházka Svoboda táta turista',
+  obchod:'autobus Berlín byt cukr čas časopis dárek den dům e-mail film hrad hotel chléb kabát koncert kostel květen leden les mrak nábytek návrh oběd obchod obraz pár pátek plán podzim rok sport srpen strom stůl taxík týden večer víkend vlak výlet zápas zub',
+  pokoj:'čaj klíč nůž počítač pokoj',
+  kava:'Anna babička banka cesta Češka čeština čokoláda dáma doktorka Eva firma hodina holka hora hudba chata chyba Jana kamarádka karta Kateřina káva kavárna Klára kniha kočka koruna kultura lékařka Lenka maminka manažerka manželka návštěva noha Ostrava otázka Petra polévka pošta Praha prodavačka profesorka rodina ruka ředitelka sestra slečna sousedka stěna středa škola taška Tereza teta tma tužka učitelka vidlička zastávka zima zpráva žena',
+  restaurace:'Itálie Julie kolegyně kuchyně Lucie lžíce Marie Natálie nemocnice policie práce přítelkyně restaurace ulice večeře vesnice židle',
+  kancelar:'kancelář loď postel skříň tramvaj Vídeň',
+  mistnost:'místnost pomoc věc',
+  mesto:'auto Brno Česko divadlo jablko jaro kino kolo letadlo léto město metro Německo okno oko patro pero pivo Slovensko slovo Turecko víno',
+  more:'letiště moře',
+  nadrazi:'nádraží počasí pondělí století',
+  muzeum:'centrum muzeum',
+  irreg:'dítě děti lidé člověk oko ruka',
+  plur:'dveře peníze Vánoce',
+  pani:'paní',
+  'adj-hard':'Černý Nový Černá Kučerová Malá Nováková Svobodová dovolená',
+  'adj-soft':'Jiří Krejčí cestující vrchní',
+  pron:'já ty on ona ono my vy oni kdo co'
+};
+const LEMMA_PAT = {};
+Object.entries(PAT_WORDS).forEach(([k,ws])=>ws.split(' ').forEach(w=>(LEMMA_PAT[w]=LEMMA_PAT[w]||[]).push(k)));
+const SEC_CARD = {prep:'prep-gen',num:'prep-gen',acc_prep:'prep-acc',loc_prep:'prep-loc',loc_time:'prep-loc',dat_prep:'prep-dat',ins_prep:'prep-ins',loc_vs:'kde-kam',nom_gender:'rod'};
+
+function paradigmFor(q){
+  const keys=[];
+  const add=k=>{ if(k && PARADIGMS[k] && !keys.includes(k)) keys.push(k); };
+  if(q.w){
+    const toks=q.w.replace(/·/g,' ').trim().split(/\s+/);
+    (LEMMA_PAT[toks[toks.length-1]]||[]).forEach(add);
+    toks.slice(0,-1).forEach(t=>{ const l=t.toLowerCase();
+      if(/^(ten|ta|to)$/.test(l)) add('ten');
+      else if(/^(můj|moje|má|mé|mou|tvůj|tvoje|svůj)$/.test(l)) add('muj');
+      else if(/^(náš|naše|váš|vaše)$/.test(l)) add('nas');
+      else if(/^(pan|paní|slečna)$/.test(l)) {}
+      else if(/í$/.test(l)) add('adj-soft');
+      else if(/[ýáé]$/.test(l)) add('adj-hard'); });
+  }
+  add(SEC_CARD[q.s]);
+  return keys.slice(0,3);
+}
+/* table html; the item's case row/column is highlighted, the case the learner confused it with is marked */
+function paradigmHtml(key, q, badCases){
+  const p=PARADIGMS[key]; if(!p) return '';
+  const caseLab=c=>'<td class="lab">'+CASES[c].ord+'. '+CASES[c].n.toLowerCase()+'</td>';
+  const cls=c=>(c===q.c?' hi':'')+(badCases.has(c)?' bad':'');
+  let h='<h4>'+escapeHtml(p.t)+'</h4>';
+  if(p.k==='decl'){
+    const tbl=(rows,cap)=>{ let t='<div class="parwrap"><table>'+(cap?'<caption>'+cap+'</caption>':'')+'<tr><th></th>'+p.cols.map(c=>'<th>'+escapeHtml(c)+'</th>').join('')+'</tr>';
+      CASE_ORDER.forEach(c=>{ const r=rows[c]||[]; t+='<tr class="'+cls(c).trim()+'">'+caseLab(c)+r.map((cell,i)=>'<td'+(c===q.c && p.cols[0]==='singulár' && i===(q.pl?1:0)?' class="tgt"':'')+'>'+escapeHtml(cell)+'</td>').join('')+'</tr>'; });
+      return t+'</table></div>'; };
+    h+=tbl(p.r, p.rp?'singulár':''); if(p.rp) h+=tbl(p.rp,'plurál');
+  } else if(p.k==='cols'){
+    h+='<div class="parwrap"><table><tr><th></th>'+p.cols.map(c=>'<th class="'+cls(c).trim()+'">'+CASES[c].ord+'. '+CASES[c].ab+'</th>').join('')+'</tr>';
+    p.r.forEach(row=>{ h+='<tr><td class="lab">'+escapeHtml(row[0])+'</td>'+row.slice(1).map((cell,i)=>'<td class="'+cls(p.cols[i]).trim()+'">'+escapeHtml(cell)+'</td>').join('')+'</tr>'; });
+    h+='</table></div>';
+  } else {
+    h+='<div class="parwrap"><table><tr>'+p.head.map(c=>'<th>'+escapeHtml(c)+'</th>').join('')+'</tr>';
+    p.r.forEach(row=>{ h+='<tr>'+row.map((cell,i)=>'<td'+(i===0?' class="lab"':'')+'>'+escapeHtml(cell)+'</td>').join('')+'</tr>'; });
+    h+='</table></div>';
+  }
+  if(p.n) h+='<div class="pn">'+escapeHtml(p.n)+(p.en?'<span class="en">'+escapeHtml(p.en)+'</span>':'')+'</div>';
+  return h;
+}
+function setupParadigm(q, mine){
+  const keys=paradigmFor(q), btn=$('#parBtn'), box=$('#parBox');
+  box.classList.add('hidden'); box.innerHTML=''; btn.setAttribute('aria-expanded','false'); btn.textContent='Ukázat tabulku';
+  btn.classList.toggle('hidden', keys.length===0);
+  if(!keys.length) return;
+  const bad=new Set();
+  if(mine){ const t=(mine.e||'').toLowerCase(); CASE_STEMS.forEach(([st,k])=>{ if(k!==q.c && t.includes(st)) bad.add(k); }); }
+  if(casePicked!==null && casePicked!==q.c) bad.add(casePicked);
+  btn.onclick=()=>{ const open=btn.getAttribute('aria-expanded')==='true';
+    btn.setAttribute('aria-expanded',String(!open)); btn.textContent=open?'Ukázat tabulku':'Skrýt tabulku';
+    box.classList.toggle('hidden',open);
+    if(!open){ box.innerHTML=keys.map(k=>paradigmHtml(k,q,bad)).join(''); box.scrollIntoView({block:'nearest',behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); } };
+}
+
+
 /* persistence — last mode / sections / length / order */
 const LS='pady-drill-v2';
 function saveState(){ try{ localStorage.setItem(LS, JSON.stringify({mode, picked:[...picked], len, shuffle, plural})); }catch(e){} }
@@ -3416,6 +3659,11 @@ function judge(val, btn, gaveUp){
   $('#fbAlt').textContent = [nearLine, alts.length ? 'Také správně: '+alts.join(', ') : ''].filter(Boolean).join(' · ');
   $('#fbRule').textContent = q.r;
   renderExplain(q, gaveUp ? '' : val);
+  const mineW = matchWrong(q, gaveUp ? '' : val);
+  const yours = !ok && !gaveUp && !btn && !!val.trim() && !mineW;   /* echo an answer that is not in the mistake list */
+  $('#fbYours').classList.toggle('hidden', !yours);
+  if(yours) $('#fbYours').innerHTML = 'Napsal jsi: <span class="f">'+escapeHtml(val.trim())+'</span>';
+  setupParadigm(q, mineW);
   $('#nextBtn').textContent = (i===deck.length-1) ? 'Vyhodnotit →' : 'Další →';
   $('#nextBtn').focus();
   updateBar();
