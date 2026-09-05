@@ -248,6 +248,8 @@ button{font:inherit;color:inherit}
 .cue{margin-top:14px;font-size:16px;color:var(--ink-2)}
 .cue b{font-family:"JetBrains Mono",monospace;font-size:15px;color:var(--ink);font-weight:700}
 .gloss{display:block;margin-top:3px;font-style:italic;color:var(--ink-3);font-size:15px}
+.mask{color:var(--ink-3);letter-spacing:.1em}
+.cue-note{display:inline-block;margin-left:8px;font:500 10px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;font-style:normal;color:var(--ink-3);border:1px solid color-mix(in srgb,currentColor 35%,transparent);border-radius:999px;padding:3px 7px;vertical-align:1px}
 
 .answer{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
 input[type=text]{
@@ -567,7 +569,7 @@ const Q = [
 {c:'gen',s:'msg',q:'Odešli jsme z ␣.',w:'hotel',g:'hotel',a:['hotelu'],r:'hotel → hotelu (‑u), na rozdíl od kostela.',
  why:'Předložka z (odkud?) vyžaduje genitiv.', why_en:'The preposition z (from where?) requires the genitive.',
  wrong:[{f:'hotela',e:'hotel má pravidelné ‑u; ‑a mají jen výjimky jako kostel, les, sýr.',en:'hotel has the regular ‑u; only exceptions like kostel, les, sýr take ‑a.'},{f:'hotel',e:'Nominativ — po z musí být genitiv.',en:'Nominative — after z the noun must be genitive.'}]},
-{c:'gen',s:'msg',q:'Ten dopis je od ␣.',w:'pan Novák',g:'Mr Novák',a:['pana nováka'],r:'Skloňuje se titul i příjmení: pana Nováka.',
+{c:'gen',s:'msg',q:'Ten dopis je od ␣.',w:'pan Novák',g:'Mr Novák',a:['pana Nováka'],r:'Skloňuje se titul i příjmení: pana Nováka.',
  why:'Předložka od (od koho?) vyžaduje genitiv.', why_en:'The preposition od (from whom?) requires the genitive.',
  wrong:[{f:'pana Novák',e:'Skloňuje se i příjmení: pana Nováka.',en:'The surname declines too: pana Nováka.'},{f:'pan Nováka',e:'Skloňuje se i titul: pan → pana.',en:'The title declines too: pan → pana.'},{f:'panu Novákovi',e:'Dativ. Po od je genitiv: pana Nováka.',en:'Dative. After od comes the genitive: pana Nováka.'}]},
 
@@ -1333,7 +1335,7 @@ const Q = [
 {c:'dat',s:'dat_sg',q:'Píšu ␣.',w:'kamarád',g:'friend',a:['kamarádovi','kamarádu'],r:'Ma tvrdý → ‑ovi.',
  why:'Sloveso psát (komu?) má předmět v dativu.', why_en:'The verb psát (to whom?) takes a dative object.',
  wrong:[{f:'kamaráda',e:'Akuzativ/genitiv. psát komu → dativ: kamarádovi.',en:'Accusative/genitive. psát komu → dative: kamarádovi.'},{f:'kamarádovy',e:'Pravopis: koncovka ‑ovi s měkkým i.',en:'Spelling: the ending ‑ovi with soft i.'}]},
-{c:'dat',s:'dat_sg',q:'Řekl to ␣.',w:'pan Novák',g:'Mr Novák',a:['panu novákovi'],r:'Titul ‑u, příjmení ‑ovi: panu Novákovi.',
+{c:'dat',s:'dat_sg',q:'Řekl to ␣.',w:'pan Novák',g:'Mr Novák',a:['panu Novákovi'],r:'Titul ‑u, příjmení ‑ovi: panu Novákovi.',
  why:'Sloveso říct (komu?) má předmět v dativu.', why_en:'The verb říct (to whom?) takes a dative object.',
  wrong:[{f:'panovi Novákovi',e:'Před jménem má pan tvar panu, ne panovi.',en:'Before a name pan takes the form panu, not panovi.'},{f:'pana Nováka',e:'Genitiv/akuzativ. říct komu → dativ: panu Novákovi.',en:'Genitive/accusative. říct komu → dative: panu Novákovi.'}]},
 {c:'dat',s:'dat_sg',q:'Pomáhám ␣.',w:'táta',g:'dad',a:['tátovi'],r:'Ma na ‑a (táta) → ‑ovi.',
@@ -1770,7 +1772,7 @@ const Q = [
 {c:'voc',s:'voc_sg',q:'Ahoj, ␣!',w:'Petr',g:'Petr',a:['Petře'],r:'Ma tvrdé → ‑e; r → ř: Petře.',
  why:'Oslovení osoby stojí ve vokativu (5. pád).', why_en:'Addressing a person uses the vocative (5th case).',
  wrong:[{f:'Petre',e:'Před ‑e se r mění na ř: Petře.',en:'Before ‑e, r changes to ř: Petře.'},{f:'Petr',e:'Nominativ. Oslovení má vokativ: Petře!',en:'Nominative. Address takes the vocative: Petře!'}]},
-{c:'voc',s:'voc_sg',q:'Dobrý den, ␣!',w:'pan Novák',g:'Mr Novák',a:['pane nováku'],r:'pan → pane; příjmení na ‑k → ‑u: Nováku.',
+{c:'voc',s:'voc_sg',q:'Dobrý den, ␣!',w:'pan Novák',g:'Mr Novák',a:['pane Nováku'],r:'pan → pane; příjmení na ‑k → ‑u: Nováku.',
  why:'Oslovení osoby stojí ve vokativu.', why_en:'Addressing a person uses the vocative.',
  wrong:[{f:'pane Nováke',e:'Po k je vokativ ‑u: Nováku.',en:'After k the vocative is ‑u: Nováku.'},{f:'pan Novák',e:'Nominativ. Oslovení: pane Nováku.',en:'Nominative. Address: pane Nováku.'}]},
 {c:'voc',s:'voc_sg',q:'␣, pojď sem!',w:'Marek',g:'Marek',a:['Marku'],r:'Ma na ‑k → ‑u.',
@@ -1812,7 +1814,7 @@ const Q = [
 {c:'voc',s:'voc_sg',q:'Ahoj, ␣!',w:'Lucie',g:'Lucie',a:['Lucie'],r:'F na ‑e / ‑ie: vokativ = nominativ.',
  why:'Oslovení osoby stojí ve vokativu; F na ‑e se nemění.', why_en:'Addressing a person uses the vocative; F in ‑e does not change.',
  wrong:[{f:'Lucio',e:'F na ‑e se nemění: Lucie!',en:'F in ‑e does not change: Lucie!'},{f:'Lucii',e:'Dativ/akuzativ. Vokativ: Lucie.',en:'Dative/accusative. Vocative: Lucie.'}]},
-{c:'voc',s:'voc_sg',q:'Dobrý den, ␣!',w:'paní Nováková',g:'Mrs Nováková',a:['paní nováková'],r:'Příjmení na ‑ová je adjektivum: vokativ = nominativ.',
+{c:'voc',s:'voc_sg',q:'Dobrý den, ␣!',w:'paní Nováková',g:'Mrs Nováková',a:['paní Nováková'],r:'Příjmení na ‑ová je adjektivum: vokativ = nominativ.',
  why:'Oslovení osoby stojí ve vokativu; paní i ‑ová se nemění.', why_en:'Addressing a person uses the vocative; neither paní nor ‑ová changes.',
  wrong:[{f:'paní Novákovo',e:'Příjmení na ‑ová se nemění.',en:'Surnames in ‑ová do not change.'},{f:'paní Novákové',e:'Genitiv/dativ. Oslovení: paní Nováková.',en:'Genitive/dative. Address: paní Nováková.'}]},
 {c:'voc',s:'voc_sg',q:'␣, prosím!',w:'pán',g:'sir',a:['pane'],r:'pán → pane (á se krátí).',
@@ -1924,19 +1926,19 @@ const Q = [
 {c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan inženýr',g:'engineer (Mr)',a:['pane inženýre'],r:'inženýr → inženýre.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pan inženýr',e:'Nominativ. Oslovení: pane inženýre.',en:'Nominative. Address: pane inženýre.'},{f:'pane inženýru',e:'Vokativ ‑u je jen po k, h, ch, g. inženýr → inženýre.',en:'Vocative ‑u only after k, h, ch, g. inženýr → inženýre.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Svoboda',g:'Mr Svoboda',a:['pane svobodo'],r:'Příjmení na ‑a → ‑o: Svobodo.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Svoboda',g:'Mr Svoboda',a:['pane Svobodo'],r:'Příjmení na ‑a → ‑o: Svobodo.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pane Svoboda',e:'Příjmení na ‑a má vokativ ‑o: Svobodo.',en:'A surname in ‑a has vocative ‑o: Svobodo.'},{f:'pane Svobodě',e:'Dativ/lokál. Vokativ: Svobodo.',en:'Dative/locative. Vocative: Svobodo.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Dvořák',g:'Mr Dvořák',a:['pane dvořáku'],r:'Příjmení na ‑k → ‑u: Dvořáku.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Dvořák',g:'Mr Dvořák',a:['pane Dvořáku'],r:'Příjmení na ‑k → ‑u: Dvořáku.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pane Dvořáke',e:'Po k je vokativ ‑u: Dvořáku.',en:'After k the vocative is ‑u: Dvořáku.'},{f:'pan Dvořák',e:'Nominativ. Oslovení: pane Dvořáku.',en:'Nominative. Address: pane Dvořáku.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Černý',g:'Mr Černý',a:['pane černý'],r:'Adjektivní příjmení se nemění: pane Černý.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Černý',g:'Mr Černý',a:['pane Černý'],r:'Adjektivní příjmení se nemění: pane Černý.',
  why:'Formální oslovení stojí ve vokativu; adjektivní příjmení se nemění.', why_en:'Formal address uses the vocative; adjectival surnames do not change.',
  wrong:[{f:'pane Černé',e:'Příjmení Černý je adjektivum: vokativ = nominativ.',en:'The surname Černý is an adjective: vocative = nominative.'},{f:'pane Černého',e:'Genitiv/akuzativ. Oslovení: pane Černý.',en:'Genitive/accusative. Address: pane Černý.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'paní Černá',g:'Mrs Černá',a:['paní černá'],r:'Adjektivní příjmení se nemění: paní Černá.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'paní Černá',g:'Mrs Černá',a:['paní Černá'],r:'Adjektivní příjmení se nemění: paní Černá.',
  why:'Formální oslovení stojí ve vokativu; adjektivní příjmení se nemění.', why_en:'Formal address uses the vocative; adjectival surnames do not change.',
  wrong:[{f:'paní Černo',e:'Adjektivní příjmení se nemění: paní Černá.',en:'Adjectival surnames do not change: paní Černá.'},{f:'paní Černé',e:'Genitiv/dativ. Oslovení: paní Černá.',en:'Genitive/dative. Address: paní Černá.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'paní Svobodová',g:'Mrs Svobodová',a:['paní svobodová'],r:'Příjmení na ‑ová se nemění.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'paní Svobodová',g:'Mrs Svobodová',a:['paní Svobodová'],r:'Příjmení na ‑ová se nemění.',
  why:'Formální oslovení stojí ve vokativu; ‑ová se nemění.', why_en:'Formal address uses the vocative; ‑ová does not change.',
  wrong:[{f:'paní Svobodovo',e:'Příjmení na ‑ová se nemění.',en:'Surnames in ‑ová do not change.'},{f:'paní Svobodové',e:'Genitiv/dativ. Oslovení: paní Svobodová.',en:'Genitive/dative. Address: paní Svobodová.'}]},
 {c:'voc',s:'voc_form',q:'␣, můžu vás poprosit?',w:'pan kolega',g:'colleague (Mr)',a:['pane kolego'],r:'kolega → kolego (Ma na ‑a).',
@@ -1951,16 +1953,16 @@ const Q = [
 {c:'voc',s:'voc_form',q:'␣, prosím účet.',w:'paní vrchní',g:'waitress',a:['paní vrchní'],r:'paní i vrchní se nemění.',
  why:'Formální oslovení stojí ve vokativu; obě slova se nemění.', why_en:'Formal address uses the vocative; neither word changes.',
  wrong:[{f:'pane vrchní',e:'Číšnici oslovíme paní vrchní, ne pane vrchní.',en:'A waitress is addressed paní vrchní, not pane vrchní.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'slečna Nováková',g:'Miss Nováková',a:['slečno nováková'],r:'slečna → slečno; ‑ová se nemění.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'slečna Nováková',g:'Miss Nováková',a:['slečno Nováková'],r:'slečna → slečno; ‑ová se nemění.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'slečna Nováková',e:'slečna → slečno; příjmení na ‑ová se nemění.',en:'slečna → slečno; a surname in ‑ová does not change.'},{f:'slečno Novákovo',e:'Příjmení na ‑ová se nemění.',en:'Surnames in ‑ová do not change.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Horák',g:'Mr Horák',a:['pane horáku'],r:'Příjmení na ‑k → ‑u.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Horák',g:'Mr Horák',a:['pane Horáku'],r:'Příjmení na ‑k → ‑u.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pane Horáke',e:'Po k je vokativ ‑u: Horáku.',en:'After k the vocative is ‑u: Horáku.'},{f:'pan Horák',e:'Nominativ. Oslovení: pane Horáku.',en:'Nominative. Address: pane Horáku.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Král',g:'Mr Král',a:['pane králi'],r:'Příjmení na měkké ‑l → ‑i: Králi.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Král',g:'Mr Král',a:['pane Králi'],r:'Příjmení na měkké ‑l → ‑i: Králi.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pane Krále',e:'Král má měkký vokativ ‑i: Králi.',en:'Král has the soft vocative ‑i: Králi.'},{f:'pan Král',e:'Nominativ. Oslovení: pane Králi.',en:'Nominative. Address: pane Králi.'}]},
-{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Procházka',g:'Mr Procházka',a:['pane procházko'],r:'Příjmení na ‑a → ‑o.',
+{c:'voc',s:'voc_form',q:'Dobrý den, ␣!',w:'pan Procházka',g:'Mr Procházka',a:['pane Procházko'],r:'Příjmení na ‑a → ‑o.',
  why:'Formální oslovení stojí ve vokativu.', why_en:'Formal address uses the vocative.',
  wrong:[{f:'pane Procházka',e:'Příjmení na ‑a má vokativ ‑o: Procházko.',en:'A surname in ‑a has vocative ‑o: Procházko.'},{f:'pane Procházku',e:'Akuzativ. Oslovení: pane Procházko.',en:'Accusative. Address: pane Procházko.'}]},
 
@@ -3214,6 +3216,29 @@ function start(items){
   render();
 }
 
+/* cue = the nominative prompt. Any cue token that already stands unchanged in the answer is masked
+   (slečna Nováková → slečna …), so the learner cannot read the form off the cue; the English gloss
+   stays as the hint. The full cue is revealed once the item is answered. */
+const cueTok = x => x.toLowerCase().replace(/[.,!?;:…]/g,'').trim();
+function cueHtml(q, reveal){
+  if(!q.w) return `<span class="gloss">${q.g}</span>`;
+  if(reveal) return `<b>${q.w}</b><span class="gloss">${q.g}</span>`;
+  const ansToks = new Set(q.a.flatMap(a=>a.split(/\s+/).map(cueTok)));
+  let masked=0, words=0;
+  const out = q.w.split(/(\s*·\s*|\s+)/).map(p=>{
+    if(!p || /^(\s*·\s*|\s+)$/.test(p)) return p;
+    words++;
+    const t=cueTok(p);
+    if(t.length>=2 && ansToks.has(t)){ masked++; return '<span class="mask">…</span>'; }
+    return p;
+  }).join('');
+  if(!masked) return `<b>${q.w}</b><span class="gloss">${q.g}</span>`;
+  const note = '<span class="cue-note">'+(masked===words ? 'tvar skryt' : 'část skryta')+'</span>';
+  return masked===words
+    ? `<span class="gloss">${q.g}${note}</span>`
+    : `<b>${out}</b><span class="gloss">${q.g}${note}</span>`;
+}
+
 function render(){
   answered=false; casePicked=null;
   const q = deck[i];
@@ -3231,9 +3256,7 @@ function render(){
   if(mixed) buildCaseBtns();
   $('#qStreak').textContent = streak>2 ? '🔥 '+streak+' v řadě' : '';
   $('#qSent').innerHTML = q.q.replace('␣','<span class="blank"></span>');
-  $('#qCue').innerHTML = q.w
-    ? `<b>${q.w}</b><span class="gloss">${q.g}</span>`
-    : `<span class="gloss">${q.g}</span>`;
+  $('#qCue').innerHTML = cueHtml(q, false);
   $('#qFb').classList.add('hidden');
   $('#qMc').innerHTML='';
   const mc = !!q.o;
@@ -3306,6 +3329,7 @@ function judge(val, btn, gaveUp){
   if(answered) return;
   answered = true;
   const q = deck[i];
+  $('#qCue').innerHTML = cueHtml(q, true);
   const ok = !gaveUp && q.a.some(a=>norm(a)===norm(val));
   const caseOk = casePicked===null ? null : casePicked===q.c;
   if(ok){ right++; streak++; best=Math.max(best,streak); }
