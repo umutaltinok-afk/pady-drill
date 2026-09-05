@@ -3097,6 +3097,9 @@ const norm = s => s.toLowerCase().trim()
   .replace(/[.,!?;:]+$/,'').replace(/\s+/g,' ');
 /* diacritic-blind form: an answer that matches only after stripping accents is accepted, but flagged yellow */
 const strip = s => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+/* a listed wrong form whose explanation names a case or number is a REAL other form (děti × dětí, ji × jí):
+   typing it is a case error, not a diacritics slip — never lenient */
+const REAL_FORM = /nominativ|akuzativ|genitiv|dativ|lokál|instrumentál|vokativ|singulár|plurál|\bsg\.|\bpl\./i;
 
 let picked = new Set(SECTIONS.map(s=>s.k));
 let shuffle = true, len = 'all', mode = 'case', plural = true;   /* plural: include pl-tagged items in Smíšený / Kontrast */
@@ -3386,7 +3389,9 @@ function judge(val, btn, gaveUp){
   $('#qCue').innerHTML = cueHtml(q, true);
   $('#diak').classList.add('hidden');
   const exact = !gaveUp && q.a.some(a=>norm(a)===norm(val));
-  const near = !exact && !gaveUp && !btn && q.a.some(a=>strip(a)===strip(val));   /* right letters, wrong or missing diacritics */
+  const typedWrong = (!exact && !gaveUp && !btn) ? (q.wrong||[]).find(w=>norm(w.f)===norm(val)) : null;
+  const collision = !!(typedWrong && REAL_FORM.test(typedWrong.e||''));
+  const near = !exact && !gaveUp && !btn && !collision && q.a.some(a=>strip(a)===strip(val));   /* right letters, wrong or missing diacritics */
   const ok = exact || near;
   if(near) nearN++;
   const caseOk = casePicked===null ? null : casePicked===q.c;
@@ -3405,7 +3410,8 @@ function judge(val, btn, gaveUp){
   $('#fbH').textContent = near ? 'Správně — pozor na diakritiku' : ok ? 'Správně' : (gaveUp ? 'Řešení' : 'Chyba');
   $('#fbSol').innerHTML = solution(q);
   const alts = q.a.slice(1);
-  const nearLine = near ? 'Diakritika: '+val.trim()+' → '+q.a.find(a=>strip(a)===strip(val)) : '';
+  const nearLine = near ? 'Diakritika: '+val.trim()+' → '+q.a.find(a=>strip(a)===strip(val))
+    : collision ? 'Není to jen diakritika — '+val.trim()+' je jiný tvar.' : '';
   $('#fbAlt').classList.toggle('hidden', !nearLine && alts.length===0);
   $('#fbAlt').textContent = [nearLine, alts.length ? 'Také správně: '+alts.join(', ') : ''].filter(Boolean).join(' · ');
   $('#fbRule').textContent = q.r;
