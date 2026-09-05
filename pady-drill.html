@@ -300,6 +300,8 @@ input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border
 .parbtn:hover{border-color:var(--accent);color:var(--accent)}
 .parbtn[aria-expanded="true"]{border-color:var(--accent);color:var(--accent)}
 .par{margin-top:10px}
+.miss .parbtn{justify-self:start;margin-top:6px;min-height:40px;font-size:14px}
+.miss .par{margin-top:4px}
 .par h4{margin:16px 0 6px;font-family:"JetBrains Mono",monospace;font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-2);font-weight:600}
 .parwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
 .par table{border-collapse:collapse;width:100%;font-size:14px;background:var(--card)}
@@ -3351,18 +3353,25 @@ function paradigmHtml(key, q, badCases){
   if(p.n) h+='<div class="pn">'+escapeHtml(p.n)+(p.en?'<span class="en">'+escapeHtml(p.en)+'</span>':'')+'</div>';
   return h;
 }
-function setupParadigm(q, mine){
-  const keys=paradigmFor(q), btn=$('#parBtn'), box=$('#parBox');
-  box.classList.add('hidden'); box.innerHTML=''; btn.setAttribute('aria-expanded','false'); btn.textContent='Ukázat tabulku';
-  btn.classList.toggle('hidden', keys.length===0);
-  if(!keys.length) return;
+function badCasesFor(q, mine, picked){
   const bad=new Set();
   if(mine){ const t=(mine.e||'').toLowerCase(); CASE_STEMS.forEach(([st,k])=>{ if(k!==q.c && t.includes(st)) bad.add(k); }); }
-  if(casePicked!==null && casePicked!==q.c) bad.add(casePicked);
+  if(picked!=null && picked!==q.c) bad.add(picked);
+  return bad;
+}
+/* a toggle button + box pair rendering the item's cards on first open */
+function parToggle(btn, box, q, bad){
+  const keys=paradigmFor(q);
+  btn.setAttribute('aria-expanded','false'); btn.textContent='Ukázat tabulku'; box.classList.add('hidden'); box.innerHTML='';
+  btn.classList.toggle('hidden', keys.length===0);
   btn.onclick=()=>{ const open=btn.getAttribute('aria-expanded')==='true';
     btn.setAttribute('aria-expanded',String(!open)); btn.textContent=open?'Ukázat tabulku':'Skrýt tabulku';
     box.classList.toggle('hidden',open);
-    if(!open){ box.innerHTML=keys.map(k=>paradigmHtml(k,q,bad)).join(''); box.scrollIntoView({block:'nearest',behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); } };
+    if(!open){ if(!box.innerHTML) box.innerHTML=keys.map(k=>paradigmHtml(k,q,bad)).join(''); box.scrollIntoView({block:'nearest',behavior: matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'}); } };
+  return keys.length>0;
+}
+function setupParadigm(q, mine){
+  parToggle($('#parBtn'), $('#parBox'), q, badCasesFor(q, mine, casePicked));
 }
 
 
@@ -3764,6 +3773,8 @@ function finish(){
       <div class="mr">${m.q.r}</div>`
       + (m.q.why ? `<div class="mr mw">${escapeHtml(m.q.why)}${m.q.why_en?'<span class="en">'+escapeHtml(m.q.why_en)+'</span>':''}</div>` : '')
       + (mine ? `<div class="mr mm"><span class="mine-lab">Tvoje chyba</span><span class="f">${escapeHtml(mine.f)}</span> — ${escapeHtml(mine.e)}${mine.en?'<span class="en">'+escapeHtml(mine.en)+'</span>':''}</div>` : '');
+    const pb=document.createElement('button'); pb.type='button'; pb.className='parbtn'; const px=document.createElement('div'); px.className='par hidden';
+    if(parToggle(pb, px, m.q, badCasesFor(m.q, mine, m.cp))){ d.appendChild(pb); d.appendChild(px); }
     ml.appendChild(d);
   });
   $('#againWrong').disabled = log.length===0;
