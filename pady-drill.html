@@ -252,6 +252,13 @@ button{font:inherit;color:inherit}
 .cue-note{display:inline-block;margin-left:8px;font:500 10px/1 'JetBrains Mono',ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase;font-style:normal;color:var(--ink-3);border:1px solid color-mix(in srgb,currentColor 35%,transparent);border-radius:999px;padding:3px 7px;vertical-align:1px}
 
 .answer{margin-top:24px;display:flex;gap:10px;flex-wrap:wrap}
+/* diacritic keys under the input — same bar as the Lekce 1–6 trainer */
+.diak{display:flex;gap:6px;margin-top:10px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+.diak::-webkit-scrollbar{display:none}
+.diak button{flex:0 0 auto;min-width:44px;min-height:44px;border:1px solid var(--line);border-radius:var(--radius);background:var(--ground);
+  font-family:"JetBrains Mono",monospace;font-size:19px;color:var(--ink);padding:0 6px;cursor:pointer;touch-action:manipulation}
+.diak button:hover{border-color:var(--accent)}
+.diak button:active{background:var(--accent-soft);border-color:var(--accent)}
 input[type=text]{
   flex:1;min-width:200px;font-family:"JetBrains Mono",monospace;font-size:20px;
   padding:13px 15px;border:1.5px solid var(--line);border-radius:var(--radius);
@@ -412,6 +419,7 @@ kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(-
                aria-label="Case form" placeholder="tvar…">
         <button class="check" type="submit" id="qCheck">Zkontrolovat</button>
       </form>
+      <div class="diak hidden" id="diak" aria-label="Diakritika"></div>
       <div class="mc hidden" id="qMc"></div>
 
       <div class="hintline" id="qHintLine">
@@ -3239,6 +3247,18 @@ function cueHtml(q, reveal){
     : `<b>${out}</b><span class="gloss">${q.g}${note}</span>`;
 }
 
+/* diacritic bar: inserts at the caret without stealing focus from the input */
+const DIAK=['ě','š','č','ř','ž','ý','á','í','é','ú','ů','ň','ť','ď'];
+(function(){ const d=$('#diak'); if(!d) return;
+  DIAK.forEach(ch=>{ const b=document.createElement('button'); b.type='button'; b.tabIndex=-1; b.textContent=ch;
+    b.addEventListener('pointerdown',e=>{ e.preventDefault(); insertChar(ch); }); d.appendChild(b); });
+})();
+function insertChar(ch){
+  const inp=$('#qInput'); if(answered) return;
+  const st=inp.selectionStart??inp.value.length, en=inp.selectionEnd??st;
+  inp.setRangeText(ch,st,en,'end'); inp.dispatchEvent(new Event('input',{bubbles:true})); inp.focus();
+}
+
 function render(){
   answered=false; casePicked=null;
   const q = deck[i];
@@ -3281,6 +3301,7 @@ function render(){
 function showFormStep(on){
   const q=deck[i], mc=!!q.o;
   $('#qForm').classList.toggle('hidden', !on || mc);
+  $('#diak').classList.toggle('hidden', !on || mc);
   $('#qMc').classList.toggle('hidden', !on || !mc);
   $('#qHintLine').classList.toggle('hidden', !on || mc);
   if(on && !mc) $('#qInput').focus();
@@ -3330,6 +3351,7 @@ function judge(val, btn, gaveUp){
   answered = true;
   const q = deck[i];
   $('#qCue').innerHTML = cueHtml(q, true);
+  $('#diak').classList.add('hidden');
   const ok = !gaveUp && q.a.some(a=>norm(a)===norm(val));
   const caseOk = casePicked===null ? null : casePicked===q.c;
   if(ok){ right++; streak++; best=Math.max(best,streak); }
