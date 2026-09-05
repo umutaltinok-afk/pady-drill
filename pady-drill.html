@@ -205,6 +205,7 @@ button{font:inherit;color:inherit}
 .pill{font-family:"JetBrains Mono",monospace;font-size:12px;letter-spacing:.06em;padding:3px 8px;border-radius:2px;
   background:var(--bad-soft);color:var(--bad)}
 .pill.ok{background:var(--good-soft);color:var(--good)}
+.pill.near{background:var(--gold-soft);color:var(--gold)}
 @media (max-width:600px){.mtx th.rh span{display:none}}
 @media (max-width:480px){.casebtns{grid-template-columns:repeat(4,1fr)} .two{grid-template-columns:1fr}}
 .secgrid{display:grid;gap:8px;margin-top:10px}
@@ -283,6 +284,7 @@ input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border
 .fb-h{font-weight:700;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
   font-family:"JetBrains Mono",monospace}
 .fb.ok .fb-h{color:var(--good)} .fb.no .fb-h{color:var(--bad)}
+.fb.near{border-color:var(--gold);background:var(--gold-soft)} .fb.near .fb-h{color:var(--gold)}
 .sol{font-family:Bitter,serif;font-size:25px;margin-top:6px;letter-spacing:-.01em}
 .sol u{text-decoration:none;color:var(--gold);font-family:"JetBrains Mono",monospace;
   font-size:.86em;font-weight:700}
@@ -330,6 +332,7 @@ input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border
 .miss .ma{font-family:"JetBrains Mono",monospace;font-size:14px}
 .miss .ma s{color:var(--bad);text-decoration-thickness:1px}
 .miss .ma b{color:var(--good)}
+.miss .ma .nf{color:var(--gold)}
 .miss .mr{font-size:14px;color:var(--ink-3)}
 h2.sh{font-size:20px;margin-bottom:6px}
 .sub{color:var(--ink-3);font-size:15px}
@@ -407,7 +410,7 @@ kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(-
       <span class="actn" id="startNote"></span>
     </div>
     <footer>Type the required form and press <kbd>Enter</kbd> to check, <kbd>Enter</kbd> again for the
-    next item. In Smíšený test and Kontrast pick the case first — keys <kbd>1</kbd>–<kbd>7</kbd> work. Diacritics count — <b>čeho</b>, not <b>ceho</b>.</footer>
+    next item. In Smíšený test and Kontrast pick the case first — keys <kbd>1</kbd>–<kbd>7</kbd> work. An answer without diacritics is accepted but flagged yellow — aim for <b>čeho</b>, not <b>ceho</b>.</footer>
   </section>
 
   <!-- QUESTION -->
@@ -1094,16 +1097,16 @@ const Q = [
 {c:'acc',s:'acc_pron',q:'Čekám na ␣.',w:'ona',g:'her',a:['ni'],r:'Po předložce: na ni (krátké i).',
  why:'čekat na + akuzativ; po předložce tvar ni.', why_en:'čekat na + accusative; after a preposition the form ni.',
  wrong:[{f:'ji',e:'Bez předložky ji; po předložce ni.',en:'Without a preposition ji; after a preposition ni.'},{f:'ní',e:'ní = po předložce v genitivu, dativu, lokálu, instrumentálu (bez ní, o ní). Akuzativ: ni.',en:'ní = after a preposition in the genitive, dative, locative, instrumental (bez ní, o ní). Accusative: ni.'}]},
-{c:'acc',s:'acc_pron',q:'Slyšíš ␣?',w:'my',g:'us',a:['nás'],r:'my → nás.',
+{pl:1,c:'acc',s:'acc_pron',q:'Slyšíš ␣?',w:'my',g:'us',a:['nás'],r:'my → nás.',
  why:'Přímý předmět slovesa slyšet: akuzativ.', why_en:'Direct object of slyšet: accusative.',
  wrong:[{f:'nám',e:'Dativ (dej nám). Akuzativ: nás.',en:'Dative (dej nám). Accusative: nás.'},{f:'my',e:'Nominativ. Přímý předmět: nás.',en:'Nominative. Direct object: nás.'}]},
-{c:'acc',s:'acc_pron',q:'Pozvu ␣.',w:'vy',g:'you (pl.)',a:['vás'],r:'vy → vás.',
+{pl:1,c:'acc',s:'acc_pron',q:'Pozvu ␣.',w:'vy',g:'you (pl.)',a:['vás'],r:'vy → vás.',
  why:'Sloveso pozvat má předmět v akuzativu.', why_en:'The verb pozvat takes an accusative object.',
  wrong:[{f:'vám',e:'Dativ (řeknu vám). Akuzativ: vás.',en:'Dative (řeknu vám). Accusative: vás.'}]},
-{c:'acc',s:'acc_pron',q:'Znám ␣.',w:'oni',g:'them',a:['je'],r:'oni → je (akuzativ plurálu).',
+{pl:1,c:'acc',s:'acc_pron',q:'Znám ␣.',w:'oni',g:'them',a:['je'],r:'oni → je (akuzativ plurálu).',
  why:'Přímý předmět slovesa znát: akuzativ.', why_en:'Direct object of znát: accusative.',
  wrong:[{f:'jim',e:'Dativ (dám jim). Akuzativ: je.',en:'Dative (dám jim). Accusative: je.'},{f:'jich',e:'Genitiv (bez nich). Akuzativ: je.',en:'Genitive (bez nich). Accusative: je.'},{f:'oni',e:'Nominativ. Přímý předmět: je.',en:'Nominative. Direct object: je.'}]},
-{c:'acc',s:'acc_pron',q:'Čekám na ␣.',w:'oni',g:'them',a:['ně'],r:'Po předložce: na ně.',
+{pl:1,c:'acc',s:'acc_pron',q:'Čekám na ␣.',w:'oni',g:'them',a:['ně'],r:'Po předložce: na ně.',
  why:'čekat na + akuzativ; po předložce tvar ně.', why_en:'čekat na + accusative; after a preposition the form ně.',
  wrong:[{f:'je',e:'Bez předložky je; po předložce ně.',en:'Without a preposition je; after a preposition ně.'},{f:'nich',e:'nich = genitiv/lokál po předložce (bez nich, o nich). Akuzativ: ně.',en:'nich = genitive/locative after a preposition (bez nich, o nich). Accusative: ně.'}]},
 {c:'acc',s:'acc_pron',q:'To je pro ␣.',w:'já',g:'me',a:['mě','mne'],r:'pro + akuzativ: pro mě / pro mne.',
@@ -1506,13 +1509,13 @@ const Q = [
 {c:'dat',s:'dat_pron',q:'Zavolám ␣.',w:'ona',g:'her',a:['jí'],r:'ona → jí (dlouhé í).',
  why:'volat komu: dativ.', why_en:'volat komu: dative.',
  wrong:[{f:'ji',e:'ji = akuzativ (vidím ji). Dativ: jí.',en:'ji = accusative (vidím ji). Dative: jí.'},{f:'ní',e:'ní jen po předložce (k ní). Bez předložky: jí.',en:'ní only after a preposition (k ní). Without one: jí.'}]},
-{c:'dat',s:'dat_pron',q:'Řekli ␣ to?',w:'vy',g:'you (pl.)',a:['vám'],r:'vy → vám.',
+{pl:1,c:'dat',s:'dat_pron',q:'Řekli ␣ to?',w:'vy',g:'you (pl.)',a:['vám'],r:'vy → vám.',
  why:'říct komu: dativ.', why_en:'říct komu: dative.',
  wrong:[{f:'vás',e:'vás = akuzativ/genitiv. Dativ: vám.',en:'vás = accusative/genitive. Dative: vám.'}]},
-{c:'dat',s:'dat_pron',q:'Koupil ␣ dárek.',w:'oni',g:'them',a:['jim'],r:'oni → jim.',
+{pl:1,c:'dat',s:'dat_pron',q:'Koupil ␣ dárek.',w:'oni',g:'them',a:['jim'],r:'oni → jim.',
  why:'koupit komu: nepřímý předmět v dativu.', why_en:'koupit komu: the indirect object in the dative.',
  wrong:[{f:'je',e:'je = akuzativ. Dativ: jim.',en:'je = accusative. Dative: jim.'},{f:'nim',e:'nim jen po předložce (k nim). Bez předložky: jim.',en:'nim only after a preposition (k nim). Without one: jim.'}]},
-{c:'dat',s:'dat_pron',q:'Pomohl ␣.',w:'my',g:'us',a:['nám'],r:'my → nám.',
+{pl:1,c:'dat',s:'dat_pron',q:'Pomohl ␣.',w:'my',g:'us',a:['nám'],r:'my → nám.',
  why:'pomoct komu: dativ.', why_en:'pomoct komu: dative.',
  wrong:[{f:'nás',e:'nás = akuzativ/genitiv. pomoct komu → dativ: nám.',en:'nás = accusative/genitive. pomoct komu → dative: nám.'}]},
 {c:'dat',s:'dat_pron',q:'Včera ␣ knihu.',g:'I gave him the book yesterday',a:['jsem mu dal'],o:['jsem mu dal','mu jsem dal','dal jsem mu','jsem dal mu'],r:'Příklonky na 2. místě: jsem → mu → (akuzativ).',
@@ -1535,13 +1538,13 @@ const Q = [
 {c:'dat',s:'dat_body',q:'Je ␣ dvacet let.',w:'on',g:'he is twenty',a:['mu'],r:'Věk: je mu dvacet let — dativ.',
  why:'Věk se vyjadřuje dativem: je mu dvacet.', why_en:'Age is expressed with the dative: je mu dvacet.',
  wrong:[{f:'ho',e:'ho = akuzativ. Věk: je mu.',en:'ho = accusative. Age: je mu.'},{f:'on',e:'Nominativ. Věk se říká dativem: je mu.',en:'Nominative. Age is said with the dative: je mu.'}]},
-{c:'dat',s:'dat_body',q:'Je ␣ líto.',w:'my',g:'we are sorry',a:['nám'],r:'je líto komu → dativ.',
+{pl:1,c:'dat',s:'dat_body',q:'Je ␣ líto.',w:'my',g:'we are sorry',a:['nám'],r:'je líto komu → dativ.',
  why:'Pocit: osoba v dativu.', why_en:'A feeling: the person in the dative.',
  wrong:[{f:'nás',e:'nás = akuzativ/genitiv. je líto komu → dativ: nám.',en:'nás = accusative/genitive. je líto komu → dative: nám.'}]},
 {c:'dat',s:'dat_body',q:'Jak ␣ je?',w:'ty',g:'how are you?',a:['ti'],r:'Jak je komu? → dativ ti.',
  why:'Stav osoby (jak je komu?): dativ.', why_en:'A person’s state (how is it to whom?): dative.',
  wrong:[{f:'tě',e:'tě = akuzativ (bolí tě). Jak je komu → ti.',en:'tě = accusative (bolí tě). How is it to whom → ti.'}]},
-{c:'dat',s:'dat_body',q:'Je ␣ teplo?',w:'vy',g:'are you warm?',a:['vám'],r:'je teplo komu → dativ.',
+{pl:1,c:'dat',s:'dat_body',q:'Je ␣ teplo?',w:'vy',g:'are you warm?',a:['vám'],r:'je teplo komu → dativ.',
  why:'Pocit: osoba v dativu.', why_en:'A feeling: the person in the dative.',
  wrong:[{f:'vás',e:'vás = akuzativ. je teplo komu → dativ: vám.',en:'vás = accusative. je teplo komu → dative: vám.'}]},
 {c:'dat',s:'dat_body',q:'Není ␣ dobře.',w:'Petr',g:'Petr feels unwell',a:['Petrovi','Petru'],r:'není dobře komu → dativ.',
@@ -2587,13 +2590,13 @@ const Q = [
 {c:'dat',s:'dat_pron',q:'Přišel k ␣.',w:'ona',g:'her',a:['ní'],r:'Po předložce: k ní.',
  why:'Předložka k + dativ; po předložce tvar ní.', why_en:'The preposition k + dative; after a preposition the form ní.',
  wrong:[{f:'jí',e:'Bez předložky jí; po předložce ní.',en:'Without a preposition jí; after a preposition ní.'},{f:'ni',e:'ni je akuzativ (na ni). k + dativ: ní.',en:'ni is accusative (na ni). k + dative: ní.'}]},
-{c:'dat',s:'dat_pron',q:'Jdu k ␣.',w:'oni',g:'them',a:['nim'],r:'Po předložce: k nim.',
+{pl:1,c:'dat',s:'dat_pron',q:'Jdu k ␣.',w:'oni',g:'them',a:['nim'],r:'Po předložce: k nim.',
  why:'Předložka k + dativ; po předložce tvar nim.', why_en:'The preposition k + dative; after a preposition the form nim.',
  wrong:[{f:'jim',e:'Krátký tvar jim nelze po předložce. K nim.',en:'The short form jim cannot follow a preposition. K nim.'},{f:'nich',e:'Genitiv/lokál (bez nich, o nich). k + dativ: nim.',en:'Genitive/locative (bez nich, o nich). k + dative: nim.'}]},
-{c:'dat',s:'dat_pron',q:'Přišli k ␣.',w:'my',g:'us',a:['nám'],r:'my → nám.',
+{pl:1,c:'dat',s:'dat_pron',q:'Přišli k ␣.',w:'my',g:'us',a:['nám'],r:'my → nám.',
  why:'Předložka k + dativ.', why_en:'The preposition k + dative.',
  wrong:[{f:'nás',e:'Akuzativ/genitiv. k + dativ: nám.',en:'Accusative/genitive. k + dative: nám.'}]},
-{c:'dat',s:'dat_pron',q:'Řekl ␣ pravdu.',w:'vy',g:'you (pl.)',a:['vám'],r:'vy → vám.',
+{pl:1,c:'dat',s:'dat_pron',q:'Řekl ␣ pravdu.',w:'vy',g:'you (pl.)',a:['vám'],r:'vy → vám.',
  why:'říct komu: dativ.', why_en:'říct komu: dative.',
  wrong:[{f:'vás',e:'Akuzativ/genitiv. Dativ: vám.',en:'Accusative/genitive. Dative: vám.'}]},
 {c:'dat',s:'dat_pron',q:'Kdy ␣ to řekneš?',w:'on',g:'him',a:['mu'],r:'on → mu.',
@@ -2610,10 +2613,10 @@ const Q = [
 {c:'dat',s:'dat_body',q:'Je ␣ padesát let.',w:'babička',g:'grandma is fifty',a:['babičce'],r:'Věk: je babičce padesát.',
  why:'Věk se vyjadřuje dativem.', why_en:'Age is expressed with the dative.',
  wrong:[{f:'babičku',e:'Akuzativ. Věk → dativ: babičce.',en:'Accusative. Age → dative: babičce.'},{f:'babička',e:'Nominativ. Věk → dativ: je babičce.',en:'Nominative. Age → dative: je babičce.'}]},
-{c:'dat',s:'dat_body',q:'Bylo ␣ horko.',w:'my',g:'we were hot',a:['nám'],r:'je horko komu → dativ.',
+{pl:1,c:'dat',s:'dat_body',q:'Bylo ␣ horko.',w:'my',g:'we were hot',a:['nám'],r:'je horko komu → dativ.',
  why:'Pocit: osoba v dativu.', why_en:'A feeling: the person in the dative.',
  wrong:[{f:'nás',e:'Akuzativ/genitiv. je horko komu → dativ: nám.',en:'Accusative/genitive. je horko komu → dative: nám.'}]},
-{c:'dat',s:'dat_body',q:'Je ␣ zima?',w:'oni',g:'are they cold?',a:['jim'],r:'je zima komu → dativ.',
+{pl:1,c:'dat',s:'dat_body',q:'Je ␣ zima?',w:'oni',g:'are they cold?',a:['jim'],r:'je zima komu → dativ.',
  why:'Pocit: osoba v dativu.', why_en:'A feeling: the person in the dative.',
  wrong:[{f:'je',e:'Akuzativ. je zima komu → dativ: jim.',en:'Accusative. je zima komu → dative: jim.'}]},
 {c:'dat',s:'dat_body',q:'Není ␣ dobře.',w:'ona',g:'she feels unwell',a:['jí'],r:'není dobře komu → dativ.',
@@ -3092,10 +3095,12 @@ const Q = [
 const $ = s => document.querySelector(s);
 const norm = s => s.toLowerCase().trim()
   .replace(/[.,!?;:]+$/,'').replace(/\s+/g,' ');
+/* diacritic-blind form: an answer that matches only after stripping accents is accepted, but flagged yellow */
+const strip = s => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
 let picked = new Set(SECTIONS.map(s=>s.k));
 let shuffle = true, len = 'all', mode = 'case', plural = true;   /* plural: include pl-tagged items in Smíšený / Kontrast */
-let plannedLen = 0, endedEarly = false;
+let plannedLen = 0, endedEarly = false, nearN = 0;   /* nearN: answers accepted without diacritics */
 let deck = [], i = 0, right = 0, wrong = 0, streak = 0, best = 0, answered = false, log = [];
 let caseRight = 0, caseWrong = 0, casePicked = null, picks = [];
 
@@ -3241,7 +3246,7 @@ function start(items, forceAll){
   deck = items.slice();
   if(shuffle) for(let j=deck.length-1;j>0;j--){const k=Math.random()*(j+1)|0;[deck[j],deck[k]]=[deck[k],deck[j]];}
   if(len!=='all' && !forceAll) deck = deck.slice(0,+len);
-  plannedLen = deck.length; endedEarly = false;
+  plannedLen = deck.length; endedEarly = false; nearN = 0;
   $('#exitBtn').classList.remove('hidden');
   i=0;right=0;wrong=0;streak=0;best=0;log=[];caseRight=0;caseWrong=0;picks=[];
   const mixed = mode!=='case';
@@ -3380,11 +3385,14 @@ function judge(val, btn, gaveUp){
   const q = deck[i];
   $('#qCue').innerHTML = cueHtml(q, true);
   $('#diak').classList.add('hidden');
-  const ok = !gaveUp && q.a.some(a=>norm(a)===norm(val));
+  const exact = !gaveUp && q.a.some(a=>norm(a)===norm(val));
+  const near = !exact && !gaveUp && !btn && q.a.some(a=>strip(a)===strip(val));   /* right letters, wrong or missing diacritics */
+  const ok = exact || near;
+  if(near) nearN++;
   const caseOk = casePicked===null ? null : casePicked===q.c;
   if(ok){ right++; streak++; best=Math.max(best,streak); }
   else { wrong++; streak=0; }
-  if(!ok || caseOk===false) log.push({q, given: gaveUp ? '—' : (val.trim()||'—'), cp:casePicked, caseOk, formOk:ok});
+  if(!ok || caseOk===false || near) log.push({q, given: gaveUp ? '—' : (val.trim()||'—'), cp:casePicked, caseOk, formOk:ok, near});
 
   if(btn){
     document.querySelectorAll('.mcb').forEach(b=>b.disabled=true);
@@ -3393,12 +3401,13 @@ function judge(val, btn, gaveUp){
       .find(b=>q.a.some(a=>b.textContent.startsWith(a+' ')))?.classList.add('pick-good');
   }
   const fb=$('#qFb');
-  fb.className='fb '+(ok?'ok':'no');
-  $('#fbH').textContent = ok ? 'Správně' : (gaveUp ? 'Řešení' : 'Chyba');
+  fb.className='fb '+(near?'near':ok?'ok':'no');
+  $('#fbH').textContent = near ? 'Správně — pozor na diakritiku' : ok ? 'Správně' : (gaveUp ? 'Řešení' : 'Chyba');
   $('#fbSol').innerHTML = solution(q);
   const alts = q.a.slice(1);
-  $('#fbAlt').classList.toggle('hidden', alts.length===0);
-  if(alts.length) $('#fbAlt').textContent = 'Také správně: '+alts.join(', ');
+  const nearLine = near ? 'Diakritika: '+val.trim()+' → '+q.a.find(a=>strip(a)===strip(val)) : '';
+  $('#fbAlt').classList.toggle('hidden', !nearLine && alts.length===0);
+  $('#fbAlt').textContent = [nearLine, alts.length ? 'Také správně: '+alts.join(', ') : ''].filter(Boolean).join(' · ');
   $('#fbRule').textContent = q.r;
   renderExplain(q, gaveUp ? '' : val);
   $('#nextBtn').textContent = (i===deck.length-1) ? 'Vyhodnotit →' : 'Další →';
@@ -3459,7 +3468,7 @@ function finish(){
   const pct = Math.round(right/deck.length*100);
   $('#rPct').textContent = pct+'%';
   const mixed = mode!=='case';
-  $('#rRaw').textContent = (endedEarly ? 'ukončeno po '+deck.length+' z '+plannedLen+' · ' : '')+(mixed?'tvar ':'')+right+' z '+deck.length+(mixed?' · pád '+caseRight+' z '+deck.length:'')+' · nejdelší série '+best;
+  $('#rRaw').textContent = (endedEarly ? 'ukončeno po '+deck.length+' z '+plannedLen+' · ' : '')+(mixed?'tvar ':'')+right+' z '+deck.length+(mixed?' · pád '+caseRight+' z '+deck.length:'')+' · nejdelší série '+best+(nearN ? ' · bez diakritiky '+nearN : '');
   $('#rTwo').classList.toggle('hidden', !mixed);
   $('#rMatrixWrap').classList.toggle('hidden', !mixed);
   if(mixed){
@@ -3497,7 +3506,7 @@ function finish(){
     const caseLine = m.caseOk===false
       ? `<div class="ma"><span class="mine-lab">Pád</span><s>${CASES[m.cp].ab}</s> → <b>${CASES[m.q.c].ab}</b>${m.formOk?' <span style="color:var(--ink-3)">· tvar správně</span>':''}</div>` : '';
     d.innerHTML = `<div class="mq">${solution(m.q)}</div>${caseLine}
-      <div class="ma">${m.formOk?'<b>'+escapeHtml(m.given)+'</b>':'<s>'+escapeHtml(m.given)+'</s> → <b>'+m.q.a[0]+'</b>'}</div>
+      <div class="ma">${m.near ? '<span class="nf">'+escapeHtml(m.given)+'</span> → <b>'+m.q.a[0]+'</b> <span class="pill near">diakritika</span>' : m.formOk ? '<b>'+escapeHtml(m.given)+'</b>' : '<s>'+escapeHtml(m.given)+'</s> → <b>'+m.q.a[0]+'</b>'}</div>
       <div class="mr">${m.q.r}</div>`
       + (m.q.why ? `<div class="mr mw">${escapeHtml(m.q.why)}${m.q.why_en?'<span class="en">'+escapeHtml(m.q.why_en)+'</span>':''}</div>` : '')
       + (mine ? `<div class="mr mm"><span class="mine-lab">Tvoje chyba</span><span class="f">${escapeHtml(mine.f)}</span> — ${escapeHtml(mine.e)}${mine.en?'<span class="en">'+escapeHtml(mine.en)+'</span>':''}</div>` : '');
