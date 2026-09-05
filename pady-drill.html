@@ -3331,7 +3331,7 @@ function paradigmFor(q){
 /* table html; the item's case row/column is highlighted, the case the learner confused it with is marked */
 function paradigmHtml(key, q, badCases){
   const p=PARADIGMS[key]; if(!p) return '';
-  const caseLab=c=>'<td class="lab">'+CASES[c].ord+'. '+CASES[c].n.toLowerCase()+'</td>';
+  const caseLab=c=>'<td class="lab">'+CASES[c].ord.replace(/ pád$/,'')+' '+CASES[c].n.toLowerCase()+'</td>';
   const cls=c=>(c===q.c?' hi':'')+(badCases.has(c)?' bad':'');
   let h='<h4>'+escapeHtml(p.t)+'</h4>';
   if(p.k==='decl'){
@@ -3340,7 +3340,7 @@ function paradigmHtml(key, q, badCases){
       return t+'</table></div>'; };
     h+=tbl(p.r, p.rp?'singulár':''); if(p.rp) h+=tbl(p.rp,'plurál');
   } else if(p.k==='cols'){
-    h+='<div class="parwrap"><table><tr><th></th>'+p.cols.map(c=>'<th class="'+cls(c).trim()+'">'+CASES[c].ord+'. '+CASES[c].ab+'</th>').join('')+'</tr>';
+    h+='<div class="parwrap"><table><tr><th></th>'+p.cols.map(c=>'<th class="'+cls(c).trim()+'">'+CASES[c].ord.replace(/ pád$/,'')+' '+CASES[c].ab+'</th>').join('')+'</tr>';
     p.r.forEach(row=>{ h+='<tr><td class="lab">'+escapeHtml(row[0])+'</td>'+row.slice(1).map((cell,i)=>'<td class="'+cls(p.cols[i]).trim()+'">'+escapeHtml(cell)+'</td>').join('')+'</tr>'; });
     h+='</table></div>';
   } else {
