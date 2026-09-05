@@ -109,6 +109,8 @@ button{font:inherit;color:inherit}
 .iconbtn{background:none;border:1px solid var(--line);border-radius:var(--radius);
   padding:3px 10px;min-height:28px;font-size:12px;cursor:pointer;color:var(--ink-2)}
 .iconbtn:hover{border-color:var(--accent);color:var(--accent)}
+#exitBtn:hover{border-color:var(--bad);color:var(--bad)}
+.opts + .opts{margin-top:12px}
 
 /* ── setup ───────────────────────────── */
 .hero{padding:48px 0 8px}
@@ -348,6 +350,7 @@ kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(-
       <span id="mLabT" class="hidden">tvar</span>
       <span>✓ <b id="mRight">0</b></span>
       <span>✗ <b id="mWrong">0</b></span>
+      <button class="iconbtn hidden" id="exitBtn" title="Ukončit test" aria-label="Ukončit test a vrátit se na výběr">✕</button>
       <button class="iconbtn" id="themeBtn" title="Světlý / tmavý režim">◐</button>
     </div>
   </div>
@@ -381,12 +384,22 @@ kbd{font-family:"JetBrains Mono",monospace;font-size:12px;border:1px solid var(-
     <div class="secgrid" id="secGrid"></div>
 
     <div class="opts">
+      <span class="chip-lab">Počet otázek</span>
+      <button class="chip" data-len="10">10</button>
+      <button class="chip" data-len="20">20</button>
+      <button class="chip" data-len="30">30</button>
+      <button class="chip" data-len="50">50</button>
+      <button class="chip" data-len="all" aria-pressed="true">Vše</button>
+    </div>
+    <div class="opts hidden" id="plRow">
+      <span class="chip-lab">Plurál</span>
+      <button class="chip" data-pl="1" aria-pressed="true">Zahrnout</button>
+      <button class="chip" data-pl="0">Vynechat</button>
+      <span class="actn" id="plNote"></span>
+    </div>
+    <div class="opts">
       <span class="chip-lab">Pořadí</span>
       <button class="chip" data-opt="shuffle" aria-pressed="true">Zamíchat</button>
-      <span class="chip-lab" style="margin-left:12px">Délka</span>
-      <button class="chip" data-len="all" aria-pressed="true">Vše</button>
-      <button class="chip" data-len="40">40</button>
-      <button class="chip" data-len="20">20</button>
     </div>
 
     <div class="actions">
@@ -652,49 +665,49 @@ const Q = [
  wrong:[{f:'Německu',e:'Lokál (v Německu). do + genitiv: Německa.',en:'Locative (v Německu). do + genitive: Německa.'},{f:'Německo',e:'Nominativ/akuzativ. Po do musí být genitiv.',en:'Nominative/accusative. After do the noun must be genitive.'}]},
 
 /* ── genitiv plurálu ────────────────────────────────────── */
-{c:'gen',s:'pl',q:'Ve třídě je pět ␣.',w:'student',g:'students',a:['studentů'],r:'Maskulinum → ‑ů, Ma i Mi.',
+{pl:1,c:'gen',s:'pl',q:'Ve třídě je pět ␣.',w:'student',g:'students',a:['studentů'],r:'Maskulinum → ‑ů, Ma i Mi.',
  why:'Číslovka pět a vyšší řídí genitiv plurálu.', why_en:'Numerals five and above govern the genitive plural.',
  wrong:[{f:'studenti',e:'Nominativ plurálu platí jen po 2–4. Po pěti je genitiv: studentů.',en:'Nominative plural applies only after 2–4. After five comes the genitive: studentů.'},{f:'studentu',e:'Chybí kroužek: studentů. Bez něj je to dativ singuláru.',en:'Missing the ring: studentů. Without it this is dative singular.'}]},
-{c:'gen',s:'pl',q:'V ulici je šest ␣.',w:'dům',g:'houses',a:['domů'],r:'dům → domů (ú → u v kmeni, ‑ů v koncovce).',
+{pl:1,c:'gen',s:'pl',q:'V ulici je šest ␣.',w:'dům',g:'houses',a:['domů'],r:'dům → domů (ú → u v kmeni, ‑ů v koncovce).',
  why:'Číslovka šest (5+) řídí genitiv plurálu.', why_en:'The numeral six (5+) governs the genitive plural.',
  wrong:[{f:'domy',e:'Nominativ/akuzativ plurálu (2–4 domy). Po šesti genitiv: domů.',en:'Nominative/accusative plural (2–4 domy). After six the genitive: domů.'},{f:'důmů',e:'Kmen se krátí: dům → domů.',en:'The stem shortens: dům → domů.'}]},
-{c:'gen',s:'pl',q:'Stálo to deset ␣.',w:'koruna',g:'crowns',a:['korun'],r:'Femininum na ‑a → nulová koncovka.',
+{pl:1,c:'gen',s:'pl',q:'Stálo to deset ␣.',w:'koruna',g:'crowns',a:['korun'],r:'Femininum na ‑a → nulová koncovka.',
  why:'Číslovka deset (5+) řídí genitiv plurálu.', why_en:'The numeral ten (5+) governs the genitive plural.',
  wrong:[{f:'koruny',e:'Nominativ plurálu je jen po 2–4 (tři koruny). Po deseti: korun.',en:'Nominative plural only after 2–4 (tři koruny). After ten: korun.'},{f:'korunů',e:'Femininum na ‑a má v genitivu plurálu nulovou koncovku, ne ‑ů.',en:'Feminine in ‑a has a zero ending in the genitive plural, not ‑ů.'}]},
-{c:'gen',s:'pl',q:'Mám sedm ␣.',w:'sestra',g:'sisters',a:['sester'],r:'Vkladné ‑e‑ rozbíjí souhláskovou skupinu: sestra → sester.',
+{pl:1,c:'gen',s:'pl',q:'Mám sedm ␣.',w:'sestra',g:'sisters',a:['sester'],r:'Vkladné ‑e‑ rozbíjí souhláskovou skupinu: sestra → sester.',
  why:'Číslovka sedm (5+) řídí genitiv plurálu.', why_en:'The numeral seven (5+) governs the genitive plural.',
  wrong:[{f:'sestr',e:'Souhláskovou skupinu ‑str rozbíjí vkladné ‑e‑: sester.',en:'The cluster ‑str is broken up by an inserted ‑e‑: sester.'},{f:'sestry',e:'Nominativ plurálu (2–4 sestry). Po sedmi: sester.',en:'Nominative plural (2–4 sestry). After seven: sester.'}]},
-{c:'gen',s:'pl',q:'Navštívil jsem pět ␣.',w:'město',g:'towns',a:['měst'],r:'Neutrum na ‑o → nulová koncovka.',
+{pl:1,c:'gen',s:'pl',q:'Navštívil jsem pět ␣.',w:'město',g:'towns',a:['měst'],r:'Neutrum na ‑o → nulová koncovka.',
  why:'Číslovka pět řídí genitiv plurálu.', why_en:'The numeral five governs the genitive plural.',
  wrong:[{f:'města',e:'Nominativ plurálu (2–4 města). Po pěti: měst.',en:'Nominative plural (2–4 města). After five: měst.'},{f:'městů',e:'Neutrum na ‑o: nulová koncovka, ne ‑ů.',en:'Neuter in ‑o: zero ending, not ‑ů.'}]},
-{c:'gen',s:'pl',q:'Byt má šest ␣.',w:'okno',g:'windows',a:['oken'],r:'Vkladné ‑e‑: okno → oken.',
+{pl:1,c:'gen',s:'pl',q:'Byt má šest ␣.',w:'okno',g:'windows',a:['oken'],r:'Vkladné ‑e‑: okno → oken.',
  why:'Číslovka šest (5+) řídí genitiv plurálu.', why_en:'The numeral six (5+) governs the genitive plural.',
  wrong:[{f:'okn',e:'Skupinu ‑kn rozbíjí vkladné ‑e‑: oken.',en:'The cluster ‑kn is broken up by an inserted ‑e‑: oken.'},{f:'okna',e:'Nominativ plurálu (2–4 okna). Po šesti: oken.',en:'Nominative plural (2–4 okna). After six: oken.'}]},
-{c:'gen',s:'pl',q:'V centru je hodně ␣.',w:'restaurace',g:'restaurants',a:['restaurací'],r:'Femininum, měkký vzor → ‑í.',
+{pl:1,c:'gen',s:'pl',q:'V centru je hodně ␣.',w:'restaurace',g:'restaurants',a:['restaurací'],r:'Femininum, měkký vzor → ‑í.',
  why:'Kvantifikátor hodně řídí genitiv plurálu.', why_en:'The quantifier hodně governs the genitive plural.',
  wrong:[{f:'restaurace',e:'Nominativ plurálu. Po hodně je genitiv plurálu: restaurací.',en:'Nominative plural. After hodně comes the genitive plural: restaurací.'},{f:'restauracích',e:'Lokál plurálu (v restauracích). Genitiv: restaurací.',en:'Locative plural (v restauracích). Genitive: restaurací.'}]},
-{c:'gen',s:'pl',q:'Prošli jsme několik ␣.',w:'ulice',g:'streets',a:['ulic'],r:'Výjimka: ulice → ulic, nulová koncovka.',
+{pl:1,c:'gen',s:'pl',q:'Prošli jsme několik ␣.',w:'ulice',g:'streets',a:['ulic'],r:'Výjimka: ulice → ulic, nulová koncovka.',
  why:'Kvantifikátor několik řídí genitiv plurálu.', why_en:'The quantifier několik governs the genitive plural.',
  wrong:[{f:'ulicí',e:'Podle vzoru by bylo ‑í, ale ulice má nulovou koncovku: ulic.',en:'By the pattern it would be ‑í, but ulice takes the zero ending: ulic.'},{f:'ulice',e:'Nominativ plurálu. Po několik je genitiv: ulic.',en:'Nominative plural. After několik comes the genitive: ulic.'}]},
-{c:'gen',s:'pl',q:'Musím koupit hodně ␣.',w:'věc',g:'things',a:['věcí'],r:'Vzor věc → ‑í.',
+{pl:1,c:'gen',s:'pl',q:'Musím koupit hodně ␣.',w:'věc',g:'things',a:['věcí'],r:'Vzor věc → ‑í.',
  why:'Kvantifikátor hodně řídí genitiv plurálu.', why_en:'The quantifier hodně governs the genitive plural.',
  wrong:[{f:'věci',e:'Nominativ/akuzativ plurálu. Po hodně je genitiv: věcí.',en:'Nominative/accusative plural. After hodně comes the genitive: věcí.'},{f:'věc',e:'Singulár. Po hodně je genitiv plurálu.',en:'Singular. After hodně comes the genitive plural.'}]},
-{c:'gen',s:'pl',q:'Projeli jsme pět ␣.',w:'nádraží',g:'stations',a:['nádraží'],r:'Vzor stavení → ‑í, tedy beze změny.',
+{pl:1,c:'gen',s:'pl',q:'Projeli jsme pět ␣.',w:'nádraží',g:'stations',a:['nádraží'],r:'Vzor stavení → ‑í, tedy beze změny.',
  why:'Číslovka pět řídí genitiv plurálu.', why_en:'The numeral five governs the genitive plural.',
  wrong:[{f:'nádražích',e:'Lokál plurálu (na nádražích). Genitiv plurálu se nemění: nádraží.',en:'Locative plural (na nádražích). Genitive plural is unchanged: nádraží.'}]},
-{c:'gen',s:'pl',q:'Na náměstí bylo hodně ␣.',w:'lidé',g:'people',a:['lidí'],r:'Nepravidelné: lidé → lidí.',
+{pl:1,c:'gen',s:'pl',q:'Na náměstí bylo hodně ␣.',w:'lidé',g:'people',a:['lidí'],r:'Nepravidelné: lidé → lidí.',
  why:'Kvantifikátor hodně řídí genitiv plurálu.', why_en:'The quantifier hodně governs the genitive plural.',
  wrong:[{f:'lidé',e:'Nominativ plurálu. Po hodně je genitiv: lidí.',en:'Nominative plural. After hodně comes the genitive: lidí.'},{f:'lidů',e:'Nepravidelné slovo: lidé → lidí.',en:'Irregular word: lidé → lidí.'}]},
-{c:'gen',s:'pl',q:'Máme pět ␣.',w:'děti',g:'children',a:['dětí'],r:'Nepravidelné: děti → dětí.',
+{pl:1,c:'gen',s:'pl',q:'Máme pět ␣.',w:'děti',g:'children',a:['dětí'],r:'Nepravidelné: děti → dětí.',
  why:'Číslovka pět řídí genitiv plurálu.', why_en:'The numeral five governs the genitive plural.',
  wrong:[{f:'děti',e:'Nominativ plurálu (2–4 děti). Po pěti: dětí.',en:'Nominative plural (2–4 děti). After five: dětí.'},{f:'dětů',e:'Nepravidelné slovo: děti → dětí.',en:'Irregular word: děti → dětí.'}]},
-{c:'gen',s:'pl',q:'Bydlím tu deset ␣.',w:'rok',g:'years',a:['let'],r:'Suppletivní tvar: pět let, nikoli „roků“ (roků je možné, ale let je běžné).',
+{pl:1,c:'gen',s:'pl',q:'Bydlím tu deset ␣.',w:'rok',g:'years',a:['let'],r:'Suppletivní tvar: pět let, nikoli „roků“ (roků je možné, ale let je běžné).',
  why:'Číslovka deset (5+) řídí genitiv plurálu; rok má zvláštní tvar let.', why_en:'The numeral ten (5+) governs the genitive plural; rok has the special form let.',
  wrong:[{f:'roky',e:'Nominativ plurálu (2–4 roky). Po deseti: let.',en:'Nominative plural (2–4 roky). After ten: let.'},{f:'rok',e:'Singulár jako v turečtině (on yıl). Po deseti je genitiv plurálu: let.',en:'Singular as in Turkish (on yıl). After ten comes the genitive plural: let.'}]},
-{c:'gen',s:'pl',q:'Byl jsem tam pět ␣.',w:'den',g:'days',a:['dní','dnů'],r:'Obojí je správně: pět dní i pět dnů.',
+{pl:1,c:'gen',s:'pl',q:'Byl jsem tam pět ␣.',w:'den',g:'days',a:['dní','dnů'],r:'Obojí je správně: pět dní i pět dnů.',
  why:'Číslovka pět řídí genitiv plurálu.', why_en:'The numeral five governs the genitive plural.',
  wrong:[{f:'dny',e:'Nominativ plurálu (2–4 dny). Po pěti: dní / dnů.',en:'Nominative plural (2–4 dny). After five: dní / dnů.'},{f:'denů',e:'Pohyblivé ‑e‑ vypadává: dnů.',en:'The fleeting ‑e‑ drops out: dnů.'}]},
-{c:'gen',s:'pl',q:'Nemám dost ␣.',w:'peníze',g:'money',a:['peněz'],r:'Nepravidelné: peníze → peněz.',
+{pl:1,c:'gen',s:'pl',q:'Nemám dost ␣.',w:'peníze',g:'money',a:['peněz'],r:'Nepravidelné: peníze → peněz.',
  why:'Kvantifikátor dost řídí genitiv.', why_en:'The quantifier dost governs the genitive.',
  wrong:[{f:'peníze',e:'Nominativ/akuzativ. Po dost je genitiv: peněz.',en:'Nominative/accusative. After dost comes the genitive: peněz.'},{f:'penízů',e:'Nepravidelné: peníze → peněz (í → ě, nulová koncovka).',en:'Irregular: peníze → peněz (í → ě, zero ending).'}]},
 
@@ -752,25 +765,25 @@ const Q = [
  wrong:[{f:'do',e:'do = kam. Původ → z.',en:'do = where to. Origin → z.'},{f:'od',e:'od se u zemí neužívá; od je pro osoby.',en:'od is not used with countries; od is for people.'},{f:'u',e:'u = kde. Původ → z.',en:'u = where. Origin → z.'}]},
 
 /* ── počítání a množství ────────────────────────────────── */
-{c:'gen',s:'num',q:'Ve třídě jsou dva ␣.',w:'student',g:'two students',a:['studenti'],r:'2, 3, 4 → nominativ plurálu, ne genitiv.',
+{pl:1,c:'gen',s:'num',q:'Ve třídě jsou dva ␣.',w:'student',g:'two students',a:['studenti'],r:'2, 3, 4 → nominativ plurálu, ne genitiv.',
  why:'Číslovky 2–4 se pojí s nominativem plurálu, ne s genitivem.', why_en:'Numerals 2–4 take the nominative plural, not the genitive.',
  wrong:[{f:'studentů',e:'Genitiv plurálu patří až po 5+. Po dva: nominativ plurálu studenti.',en:'Genitive plural starts at 5+. After dva: nominative plural studenti.'},{f:'studenty',e:'Akuzativ plurálu (vidím studenty). Podmět po jsou: studenti.',en:'Accusative plural (vidím studenty). Subject after jsou: studenti.'},{f:'student',e:'Singulár jako v turečtině (iki öğrenci). Po dva plurál: studenti.',en:'Singular as in Turkish (iki öğrenci). After dva plural: studenti.'}]},
-{c:'gen',s:'num',q:'Na kurz se přihlásilo pět ␣.',w:'student',g:'five students',a:['studentů'],r:'Od pěti výš → genitiv plurálu (a sloveso jde do středního rodu sg.).',
+{pl:1,c:'gen',s:'num',q:'Na kurz se přihlásilo pět ␣.',w:'student',g:'five students',a:['studentů'],r:'Od pěti výš → genitiv plurálu (a sloveso jde do středního rodu sg.).',
  why:'Číslovka pět (5+) řídí genitiv plurálu.', why_en:'The numeral five (5+) governs the genitive plural.',
  wrong:[{f:'studenti',e:'Nominativ plurálu platí po 2–4. Po pěti: studentů.',en:'Nominative plural applies after 2–4. After five: studentů.'},{f:'studentu',e:'Chybí kroužek: studentů.',en:'Missing the ring: studentů.'}]},
-{c:'gen',s:'num',q:'Dám si tři ␣.',w:'káva',g:'three coffees',a:['kávy'],r:'2–4 → nominativ plurálu: kávy.',
+{pl:1,c:'gen',s:'num',q:'Dám si tři ␣.',w:'káva',g:'three coffees',a:['kávy'],r:'2–4 → nominativ plurálu: kávy.',
  why:'Číslovka tři (2–4) se pojí s nominativem plurálu, ne s genitivem.', why_en:'The numeral tři (2–4) takes the nominative plural, not the genitive.',
  wrong:[{f:'káv',e:'Genitiv plurálu patří po 5+. Po tři: kávy.',en:'Genitive plural belongs after 5+. After tři: kávy.'},{f:'kávu',e:'Akuzativ singuláru (dám si kávu). Po tři plurál: kávy.',en:'Accusative singular (dám si kávu). After tři plural: kávy.'}]},
-{c:'gen',s:'num',q:'Vypil šest ␣.',w:'káva',g:'six coffees',a:['káv'],r:'5+ → genitiv plurálu: káv.',
+{pl:1,c:'gen',s:'num',q:'Vypil šest ␣.',w:'káva',g:'six coffees',a:['káv'],r:'5+ → genitiv plurálu: káv.',
  why:'Číslovka šest (5+) řídí genitiv plurálu.', why_en:'The numeral six (5+) governs the genitive plural.',
  wrong:[{f:'kávy',e:'Nominativ plurálu je po 2–4. Po šesti: káv.',en:'Nominative plural after 2–4. After six: káv.'},{f:'kávů',e:'Femininum na ‑a: nulová koncovka, ne ‑ů.',en:'Feminine in ‑a: zero ending, not ‑ů.'}]},
-{c:'gen',s:'num',q:'Stálo to dvacet jedna ␣.',w:'koruna',g:'21 crowns',a:['korun','koruna'],r:'Po …21 spisovně nominativ singuláru (dvacet jedna koruna); běžně se ale slýchá i genitiv plurálu.',
+{pl:1,c:'gen',s:'num',q:'Stálo to dvacet jedna ␣.',w:'koruna',g:'21 crowns',a:['korun','koruna'],r:'Po …21 spisovně nominativ singuláru (dvacet jedna koruna); běžně se ale slýchá i genitiv plurálu.',
  why:'Po složené číslovce s jedna je spisovně nominativ singuláru; genitiv plurálu se také běžně užívá.', why_en:'After a compound numeral ending in jedna, standard Czech uses the nominative singular; the genitive plural is also common.',
  wrong:[{f:'koruny',e:'Nominativ plurálu patří po 2–4 (dvacet dvě koruny). Po …jedna: koruna / korun.',en:'Nominative plural belongs after 2–4 (dvacet dvě koruny). After …jedna: koruna / korun.'},{f:'korunu',e:'Akuzativ singuláru. Po číslovce stojí nominativ: koruna.',en:'Accusative singular. After the numeral comes the nominative: koruna.'}]},
-{c:'gen',s:'num',q:'Stálo to dvacet dvě ␣.',w:'koruna',g:'22 crowns',a:['koruny'],r:'Poslední číslice 2–4 → nominativ plurálu.',
+{pl:1,c:'gen',s:'num',q:'Stálo to dvacet dvě ␣.',w:'koruna',g:'22 crowns',a:['koruny'],r:'Poslední číslice 2–4 → nominativ plurálu.',
  why:'Rozhoduje poslední číslice: dvě (2–4) → nominativ plurálu, ne genitiv.', why_en:'The last digit decides: dvě (2–4) → nominative plural, not genitive.',
  wrong:[{f:'korun',e:'Genitiv plurálu je po 5+ nebo po …jedna. Po …dvě: koruny.',en:'Genitive plural after 5+ or after …jedna. After …dvě: koruny.'},{f:'koruna',e:'Singulár jen po jedna. Po dvě: koruny.',en:'Singular only after jedna. After dvě: koruny.'}]},
-{c:'gen',s:'num',q:'Stálo to dvacet pět ␣.',w:'koruna',g:'25 crowns',a:['korun'],r:'Poslední číslice 5+ → genitiv plurálu.',
+{pl:1,c:'gen',s:'num',q:'Stálo to dvacet pět ␣.',w:'koruna',g:'25 crowns',a:['korun'],r:'Poslední číslice 5+ → genitiv plurálu.',
  why:'Rozhoduje poslední číslice: pět (5+) → genitiv plurálu.', why_en:'The last digit decides: pět (5+) → genitive plural.',
  wrong:[{f:'koruny',e:'Nominativ plurálu je po …2–4. Po …pět: korun.',en:'Nominative plural after …2–4. After …pět: korun.'},{f:'korunů',e:'Femininum na ‑a: nulová koncovka.',en:'Feminine in ‑a: zero ending.'}]},
 {c:'gen',s:'num',q:'Mám hodně ␣.',w:'práce',g:'a lot of work',a:['práce'],r:'Kvantifikátor hodně + genitiv (tady singulár, látkové/abstraktní slovo).',
@@ -779,16 +792,16 @@ const Q = [
 {c:'gen',s:'num',q:'Mám málo ␣.',w:'čas',g:'little time',a:['času'],r:'málo + genitiv singuláru.',
  why:'Kvantifikátor málo řídí genitiv singuláru.', why_en:'The quantifier málo governs the genitive singular.',
  wrong:[{f:'čas',e:'Akuzativ (mám čas). Po málo je genitiv: času.',en:'Accusative (mám čas). After málo comes the genitive: času.'},{f:'časů',e:'Genitiv plurálu. čas je tu nepočitatelný: času.',en:'Genitive plural. čas is uncountable here: času.'}]},
-{c:'gen',s:'num',q:'Koupil kilo ␣.',w:'jablko',g:'a kilo of apples',a:['jablek'],r:'Míra + genitiv plurálu.',
+{pl:1,c:'gen',s:'num',q:'Koupil kilo ␣.',w:'jablko',g:'a kilo of apples',a:['jablek'],r:'Míra + genitiv plurálu.',
  why:'Míra kilo řídí genitiv plurálu.', why_en:'The measure kilo governs the genitive plural.',
  wrong:[{f:'jablka',e:'Nominativ plurálu (2–4 jablka). Po kilo genitiv plurálu: jablek.',en:'Nominative plural (2–4 jablka). After kilo the genitive plural: jablek.'},{f:'jablk',e:'Skupinu ‑lk rozbíjí vkladné ‑e‑: jablek.',en:'The cluster ‑lk is broken up by an inserted ‑e‑: jablek.'}]},
 {c:'gen',s:'num',q:'Čekal jsem půl ␣.',w:'hodina',g:'half an hour',a:['hodiny'],r:'půl + genitiv singuláru.',
  why:'Výraz půl řídí genitiv singuláru.', why_en:'The word půl governs the genitive singular.',
  wrong:[{f:'hodinu',e:'Akuzativ (čekal hodinu). Po půl genitiv: hodiny.',en:'Accusative (čekal hodinu). After půl the genitive: hodiny.'},{f:'hodin',e:'Genitiv plurálu (pět hodin). Půl + singulár: hodiny.',en:'Genitive plural (pět hodin). Půl + singular: hodiny.'}]},
-{c:'gen',s:'num',q:'V létě je tu spousta ␣.',w:'turista',g:'tourists',a:['turistů'],r:'spousta + genitiv plurálu. turista je maskulinum → ‑ů.',
+{pl:1,c:'gen',s:'num',q:'V létě je tu spousta ␣.',w:'turista',g:'tourists',a:['turistů'],r:'spousta + genitiv plurálu. turista je maskulinum → ‑ů.',
  why:'Kvantifikátor spousta řídí genitiv plurálu.', why_en:'The quantifier spousta governs the genitive plural.',
  wrong:[{f:'turist',e:'turista je maskulinum, ne femininum: genitiv plurálu ‑ů, ne nulová koncovka.',en:'turista is masculine, not feminine: genitive plural ‑ů, not zero.'},{f:'turisté',e:'Nominativ plurálu. Po spousta genitiv: turistů.',en:'Nominative plural. After spousta the genitive: turistů.'}]},
-{c:'gen',s:'num',q:'Kolik ␣ ti zbylo?',w:'peníze',g:'money',a:['peněz'],r:'kolik + genitiv: kolik peněz.',
+{pl:1,c:'gen',s:'num',q:'Kolik ␣ ti zbylo?',w:'peníze',g:'money',a:['peněz'],r:'kolik + genitiv: kolik peněz.',
  why:'Tázací kolik řídí genitiv.', why_en:'The question word kolik governs the genitive.',
  wrong:[{f:'peníze',e:'Nominativ/akuzativ. Po kolik genitiv: peněz.',en:'Nominative/accusative. After kolik the genitive: peněz.'},{f:'penízů',e:'Nepravidelné: peníze → peněz.',en:'Irregular: peníze → peněz.'}]},
 
@@ -820,7 +833,7 @@ const Q = [
 {c:'gen',s:'adj',q:'Ptal jsem se ␣.',w:'ten pán',g:'that gentleman',a:['toho pána'],r:'Ma: toho + ‑a.',
  why:'Sloveso ptát se se pojí s genitivem (ptát se koho).', why_en:'The verb ptát se takes the genitive (ask whom).',
  wrong:[{f:'toho pánu',e:'Ma má genitiv ‑a; pánu je dativ.',en:'Ma has genitive ‑a; pánu is dative.'},{f:'tomu pánovi',e:'Dativ. ptát se + genitiv: toho pána.',en:'Dative. ptát se + genitive: toho pána.'},{f:'ten pán',e:'Nominativ. Předmět slovesa ptát se stojí v genitivu.',en:'Nominative. The object of ptát se stands in the genitive.'}]},
-{c:'gen',s:'adj',q:'Na hřišti bylo pět ␣.',w:'malé dítě',g:'small children',a:['malých dětí'],r:'Genitiv plurálu tvrdého adjektiva → ‑ých; děti → dětí.',
+{pl:1,c:'gen',s:'adj',q:'Na hřišti bylo pět ␣.',w:'malé dítě',g:'small children',a:['malých dětí'],r:'Genitiv plurálu tvrdého adjektiva → ‑ých; děti → dětí.',
  why:'Číslovka pět (5+) řídí genitiv plurálu.', why_en:'The numeral five (5+) governs the genitive plural.',
  wrong:[{f:'malé děti',e:'Nominativ plurálu (2–4 malé děti). Po pěti: malých dětí.',en:'Nominative plural (2–4 malé děti). After five: malých dětí.'},{f:'malých dětů',e:'Nepravidelné: děti → dětí.',en:'Irregular: děti → dětí.'},{f:'malé dětí',e:'Adjektivum musí být v genitivu plurálu: malých.',en:'The adjective must be genitive plural: malých.'}]},
 {c:'gen',s:'adj',q:'Nezvládl bych to bez ␣.',w:'tvoje pomoc',g:'your help',a:['tvé pomoci','tvojí pomoci'],r:'tvé / tvojí + pomoci (vzor věc).',
@@ -934,43 +947,43 @@ const Q = [
  wrong:[{f:'dítěte',e:'Genitiv (bez dítěte). Akuzativ N = nominativ: dítě.',en:'Genitive (bez dítěte). Accusative N = nominative: dítě.'},{f:'díte',e:'Chybí diakritika: dítě.',en:'Missing diacritics: dítě.'}]},
 
 /* ── acc_pl ─────────────────────────────────────────── */
-{c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'student',g:'students',a:['studenty'],r:'Ma tvrdý pl. → ‑y (nominativ studenti, akuzativ studenty).',
+{pl:1,c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'student',g:'students',a:['studenty'],r:'Ma tvrdý pl. → ‑y (nominativ studenti, akuzativ studenty).',
  why:'Přímý předmět slovesa vidět; v plurálu se Ma liší od nominativu.', why_en:'Direct object of vidět; in the plural Ma differs from the nominative.',
  wrong:[{f:'studenti',e:'Nominativ plurálu (studenti jsou). Akuzativ plurálu: studenty.',en:'Nominative plural (studenti jsou). Accusative plural: studenty.'},{f:'studentů',e:'Genitiv plurálu (pět studentů). Akuzativ: studenty.',en:'Genitive plural (pět studentů). Accusative: studenty.'}]},
-{c:'acc',s:'acc_pl',q:'Mám dva ␣.',w:'bratr',g:'brothers',a:['bratry'],r:'Ma tvrdý pl. → ‑y; po 2–4 akuzativ plurálu.',
+{pl:1,c:'acc',s:'acc_pl',q:'Mám dva ␣.',w:'bratr',g:'brothers',a:['bratry'],r:'Ma tvrdý pl. → ‑y; po 2–4 akuzativ plurálu.',
  why:'Sloveso mít + číslovka dva: předmět v akuzativu plurálu.', why_en:'The verb mít + the numeral dva: object in the accusative plural.',
  wrong:[{f:'bratři',e:'Nominativ pl. (bratři jsou). Po mám akuzativ: bratry.',en:'Nominative pl. (bratři jsou). After mám the accusative: bratry.'},{f:'bratrů',e:'Genitiv pl. platí po 5+. Po dva akuzativ pl.: bratry.',en:'Genitive pl. applies after 5+. After dva accusative pl.: bratry.'}]},
-{c:'acc',s:'acc_pl',q:'Znám ␣.',w:'učitel',g:'teachers',a:['učitele'],r:'Ma měkký pl. → ‑e (nominativ učitelé).',
+{pl:1,c:'acc',s:'acc_pl',q:'Znám ␣.',w:'učitel',g:'teachers',a:['učitele'],r:'Ma měkký pl. → ‑e (nominativ učitelé).',
  why:'Sloveso znát má předmět v akuzativu.', why_en:'The verb znát takes an accusative object.',
  wrong:[{f:'učitelé',e:'Nominativ pl. Akuzativ pl.: učitele.',en:'Nominative pl. Accusative pl.: učitele.'},{f:'učitelů',e:'Genitiv pl. Akuzativ: učitele.',en:'Genitive pl. Accusative: učitele.'}]},
-{c:'acc',s:'acc_pl',q:'Pozvu ␣.',w:'kamarád',g:'friends',a:['kamarády'],r:'Ma tvrdý pl. → ‑y.',
+{pl:1,c:'acc',s:'acc_pl',q:'Pozvu ␣.',w:'kamarád',g:'friends',a:['kamarády'],r:'Ma tvrdý pl. → ‑y.',
  why:'Sloveso pozvat má předmět v akuzativu.', why_en:'The verb pozvat takes an accusative object.',
  wrong:[{f:'kamarádi',e:'Nominativ pl. Akuzativ pl. Ma: kamarády.',en:'Nominative pl. Accusative pl. Ma: kamarády.'},{f:'kamarádů',e:'Genitiv pl. (pět kamarádů). Po pozvu akuzativ: kamarády.',en:'Genitive pl. (pět kamarádů). After pozvu the accusative: kamarády.'}]},
-{c:'acc',s:'acc_pl',q:'Vidím dva ␣.',w:'muž',g:'men',a:['muže'],r:'Ma měkký pl. → ‑e.',
+{pl:1,c:'acc',s:'acc_pl',q:'Vidím dva ␣.',w:'muž',g:'men',a:['muže'],r:'Ma měkký pl. → ‑e.',
  why:'Přímý předmět slovesa vidět; po dva akuzativ plurálu.', why_en:'Direct object of vidět; after dva the accusative plural.',
  wrong:[{f:'muži',e:'Nominativ pl. Akuzativ pl. měkkého Ma: muže.',en:'Nominative pl. Accusative pl. of soft Ma: muže.'},{f:'mužů',e:'Genitiv pl. Po dva akuzativ: muže.',en:'Genitive pl. After dva the accusative: muže.'}]},
-{c:'acc',s:'acc_pl',q:'Mám dva ␣.',w:'počítač',g:'computers',a:['počítače'],r:'Mi měkký pl.: akuzativ = nominativ ‑e.',
+{pl:1,c:'acc',s:'acc_pl',q:'Mám dva ␣.',w:'počítač',g:'computers',a:['počítače'],r:'Mi měkký pl.: akuzativ = nominativ ‑e.',
  why:'Sloveso mít + dva: akuzativ plurálu.', why_en:'The verb mít + dva: accusative plural.',
  wrong:[{f:'počítačů',e:'Genitiv pl. (pět počítačů). Po dva akuzativ: počítače.',en:'Genitive pl. (pět počítačů). After dva the accusative: počítače.'}]},
-{c:'acc',s:'acc_pl',q:'Kupuju ␣.',w:'jablko',g:'apples',a:['jablka'],r:'N pl. → ‑a.',
+{pl:1,c:'acc',s:'acc_pl',q:'Kupuju ␣.',w:'jablko',g:'apples',a:['jablka'],r:'N pl. → ‑a.',
  why:'Sloveso kupovat má předmět v akuzativu.', why_en:'The verb kupovat takes an accusative object.',
  wrong:[{f:'jablek',e:'Genitiv pl. (kilo jablek). Akuzativ pl.: jablka.',en:'Genitive pl. (kilo jablek). Accusative pl.: jablka.'},{f:'jablky',e:'Instrumentál pl. Akuzativ: jablka.',en:'Instrumental pl. Accusative: jablka.'}]},
-{c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'auto',g:'cars',a:['auta'],r:'N pl. → ‑a.',
+{pl:1,c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'auto',g:'cars',a:['auta'],r:'N pl. → ‑a.',
  why:'Sloveso vidět má předmět v akuzativu.', why_en:'The verb vidět takes an accusative object.',
  wrong:[{f:'aut',e:'Genitiv pl. (pět aut). Akuzativ: auta.',en:'Genitive pl. (pět aut). Accusative: auta.'},{f:'auty',e:'Instrumentál pl. Akuzativ: auta.',en:'Instrumental pl. Accusative: auta.'}]},
-{c:'acc',s:'acc_pl',q:'Mám ␣.',w:'kniha',g:'books',a:['knihy'],r:'F na ‑a pl. → ‑y.',
+{pl:1,c:'acc',s:'acc_pl',q:'Mám ␣.',w:'kniha',g:'books',a:['knihy'],r:'F na ‑a pl. → ‑y.',
  why:'Sloveso mít má předmět v akuzativu.', why_en:'The verb mít takes an accusative object.',
  wrong:[{f:'knih',e:'Genitiv pl. (pět knih). Akuzativ pl.: knihy.',en:'Genitive pl. (pět knih). Accusative pl.: knihy.'},{f:'knihu',e:'Akuzativ singuláru. Plurál: knihy.',en:'Accusative singular. Plural: knihy.'}]},
-{c:'acc',s:'acc_pl',q:'Vidím tři ␣.',w:'žena',g:'women',a:['ženy'],r:'F na ‑a pl. → ‑y.',
+{pl:1,c:'acc',s:'acc_pl',q:'Vidím tři ␣.',w:'žena',g:'women',a:['ženy'],r:'F na ‑a pl. → ‑y.',
  why:'Přímý předmět; po tři akuzativ plurálu.', why_en:'Direct object; after tři the accusative plural.',
  wrong:[{f:'žen',e:'Genitiv pl. (pět žen). Po tři akuzativ: ženy.',en:'Genitive pl. (pět žen). After tři the accusative: ženy.'},{f:'ženu',e:'Singulár. Po tři plurál: ženy.',en:'Singular. After tři the plural: ženy.'}]},
-{c:'acc',s:'acc_pl',q:'Máme dvě ␣.',w:'židle',g:'chairs',a:['židle'],r:'F měkký pl.: akuzativ = nominativ ‑e.',
+{pl:1,c:'acc',s:'acc_pl',q:'Máme dvě ␣.',w:'židle',g:'chairs',a:['židle'],r:'F měkký pl.: akuzativ = nominativ ‑e.',
  why:'Sloveso mít + dvě: akuzativ plurálu.', why_en:'The verb mít + dvě: accusative plural.',
  wrong:[{f:'židlí',e:'Genitiv pl. (pět židlí). Po dvě akuzativ: židle.',en:'Genitive pl. (pět židlí). After dvě the accusative: židle.'},{f:'židli',e:'Akuzativ singuláru. Plurál: židle.',en:'Accusative singular. Plural: židle.'}]},
-{c:'acc',s:'acc_pl',q:'Mám rád ␣.',w:'děti',g:'children',a:['děti'],r:'děti: akuzativ = nominativ plurálu.',
+{pl:1,c:'acc',s:'acc_pl',q:'Mám rád ␣.',w:'děti',g:'children',a:['děti'],r:'děti: akuzativ = nominativ plurálu.',
  why:'mít rád + akuzativ.', why_en:'mít rád + accusative.',
  wrong:[{f:'dětí',e:'Genitiv pl. (pět dětí). Akuzativ: děti.',en:'Genitive pl. (pět dětí). Accusative: děti.'},{f:'dětem',e:'Dativ pl. Akuzativ: děti.',en:'Dative pl. Accusative: děti.'}]},
-{c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'lidé',g:'people',a:['lidi'],r:'lidé (nominativ) → lidi (akuzativ).',
+{pl:1,c:'acc',s:'acc_pl',q:'Vidím ␣.',w:'lidé',g:'people',a:['lidi'],r:'lidé (nominativ) → lidi (akuzativ).',
  why:'Přímý předmět slovesa vidět.', why_en:'Direct object of vidět.',
  wrong:[{f:'lidé',e:'Nominativ pl. Akuzativ: lidi.',en:'Nominative pl. Accusative: lidi.'},{f:'lidí',e:'Genitiv pl. (hodně lidí). Akuzativ: lidi.',en:'Genitive pl. (hodně lidí). Accusative: lidi.'}]},
 
@@ -1640,10 +1653,10 @@ const Q = [
 {c:'ins',s:'ins_prep',q:'Obraz je nad ␣.',w:'stůl',g:'table (is above)',a:['stolem'],r:'Kde? → nad + instrumentál: stolem.',
  why:'Poloha (kde?) nad něčím: nad + instrumentál.', why_en:'Position (where?) above something: nad + instrumental.',
  wrong:[{f:'stůl',e:'Akuzativ = kam (dám to nad stůl). Je = kde → instrumentál stolem.',en:'Accusative = where to (dám to nad stůl). Je = where → instrumental stolem.'}]},
-{c:'acc',s:'ins_prep',q:'Postavil kufr za ␣.',w:'dveře',g:'door (put behind)',a:['dveře'],r:'Kam? → za + akuzativ; dveře (pl.) = nominativ.',
+{pl:1,c:'acc',s:'ins_prep',q:'Postavil kufr za ␣.',w:'dveře',g:'door (put behind)',a:['dveře'],r:'Kam? → za + akuzativ; dveře (pl.) = nominativ.',
  why:'Pohyb (kam?) za něco: za + akuzativ.', why_en:'Movement (where to?) behind something: za + accusative.',
  wrong:[{f:'dveřmi',e:'Instrumentál = kde (za dveřmi). Postavil = kam → akuzativ dveře.',en:'Instrumental = where (za dveřmi). Postavil = where to → accusative dveře.'}]},
-{c:'ins',s:'ins_prep',q:'Kufr stojí za ␣.',w:'dveře',g:'door (is behind)',a:['dveřmi'],r:'dveře (pl.) → dveřmi.',
+{pl:1,c:'ins',s:'ins_prep',q:'Kufr stojí za ␣.',w:'dveře',g:'door (is behind)',a:['dveřmi'],r:'dveře (pl.) → dveřmi.',
  why:'Poloha (kde?) za něčím: za + instrumentál.', why_en:'Position (where?) behind something: za + instrumental.',
  wrong:[{f:'dveře',e:'Akuzativ = kam (postavil za dveře). Stojí = kde → za dveřmi.',en:'Accusative = where to (postavil za dveře). Stojí = where → za dveřmi.'},{f:'dveřema',e:'Hovorové. Spisovně: dveřmi.',en:'Colloquial. Standard: dveřmi.'}]},
 {c:'acc',s:'ins_prep',q:'Kočka vlezla pod ␣.',w:'postel',g:'bed (crawled under)',a:['postel'],r:'Kam? → pod + akuzativ; F na souhlásku = nominativ.',
@@ -1975,150 +1988,150 @@ const Q = [
  wrong:[{f:'pane Procházka',e:'Příjmení na ‑a má vokativ ‑o: Procházko.',en:'A surname in ‑a has vocative ‑o: Procházko.'},{f:'pane Procházku',e:'Akuzativ. Oslovení: pane Procházko.',en:'Accusative. Address: pane Procházko.'}]},
 
 /* ── nom_pl_anim ─────────────────────────────────────────── */
-{c:'nom',s:'nom_pl_anim',q:'Ve třídě jsou ␣.',w:'student',g:'students',a:['studenti'],r:'Ma tvrdé pl. → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Ve třídě jsou ␣.',w:'student',g:'students',a:['studenti'],r:'Ma tvrdé pl. → ‑i.',
  why:'Podmět v množném čísle stojí v nominativu plurálu; Ma má ‑i.', why_en:'A plural subject stands in the nominative plural; Ma takes ‑i.',
  wrong:[{f:'studenty',e:'Akuzativ pl. (vidím studenty). Podmět → nominativ studenti.',en:'Accusative pl. (vidím studenty). Subject → nominative studenti.'},{f:'studentů',e:'Genitiv pl. Podmět → nominativ: studenti.',en:'Genitive pl. Subject → nominative: studenti.'}]},
-{c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'kamarád',g:'friends',a:['kamarádi'],r:'Ma tvrdé pl. → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'kamarád',g:'friends',a:['kamarádi'],r:'Ma tvrdé pl. → ‑i.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'kamarády',e:'Akuzativ pl. Podmět → kamarádi.',en:'Accusative pl. Subject → kamarádi.'},{f:'kamarádů',e:'Genitiv pl. Podmět → kamarádi.',en:'Genitive pl. Subject → kamarádi.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Přišli ␣.',w:'doktor',g:'doctors',a:['doktoři'],r:'r → ř před ‑i: doktoři.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Přišli ␣.',w:'doktor',g:'doctors',a:['doktoři'],r:'r → ř před ‑i: doktoři.',
  why:'Podmět v plurálu → nominativ plurálu; před ‑i se r mění na ř.', why_en:'Plural subject → nominative plural; r changes to ř before ‑i.',
  wrong:[{f:'doktori',e:'Před ‑i se r mění na ř: doktoři.',en:'Before ‑i, r changes to ř: doktoři.'},{f:'doktory',e:'Akuzativ pl. Podmět → doktoři.',en:'Accusative pl. Subject → doktoři.'}]},
-{c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'bratr',g:'brothers',a:['bratři'],r:'r → ř před ‑i: bratři.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'bratr',g:'brothers',a:['bratři'],r:'r → ř před ‑i: bratři.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'bratri',e:'Před ‑i se r mění na ř: bratři.',en:'Before ‑i, r changes to ř: bratři.'},{f:'bratry',e:'Akuzativ pl. Podmět → bratři.',en:'Accusative pl. Subject → bratři.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Praze žijí ␣.',w:'Čech',g:'Czechs',a:['Češi'],r:'ch → š před ‑i: Češi.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Praze žijí ␣.',w:'Čech',g:'Czechs',a:['Češi'],r:'ch → š před ‑i: Češi.',
  why:'Podmět v plurálu → nominativ plurálu; ch se před ‑i mění na š.', why_en:'Plural subject → nominative plural; ch changes to š before ‑i.',
  wrong:[{f:'Čechi',e:'Před ‑i se ch mění na š: Češi.',en:'Before ‑i, ch changes to š: Češi.'},{f:'Čechy',e:'Čechy = země (Bohemia) / akuzativ. Lidé: Češi.',en:'Čechy = the land (Bohemia) / accusative. People: Češi.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Bratislavě žijí ␣.',w:'Slovák',g:'Slovaks',a:['Slováci'],r:'k → c před ‑i: Slováci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Bratislavě žijí ␣.',w:'Slovák',g:'Slovaks',a:['Slováci'],r:'k → c před ‑i: Slováci.',
  why:'Podmět v plurálu → nominativ plurálu; k se před ‑i mění na c.', why_en:'Plural subject → nominative plural; k changes to c before ‑i.',
  wrong:[{f:'Slováki',e:'Před ‑i se k mění na c: Slováci.',en:'Before ‑i, k changes to c: Slováci.'},{f:'Slováky',e:'Akuzativ pl. Podmět → Slováci.',en:'Accusative pl. Subject → Slováci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Na hřišti hrají ␣.',w:'kluk',g:'boys',a:['kluci'],r:'k → c před ‑i: kluci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Na hřišti hrají ␣.',w:'kluk',g:'boys',a:['kluci'],r:'k → c před ‑i: kluci.',
  why:'Podmět v plurálu → nominativ plurálu; k → c.', why_en:'Plural subject → nominative plural; k → c.',
  wrong:[{f:'kluki',e:'Před ‑i se k mění na c: kluci.',en:'Before ‑i, k changes to c: kluci.'},{f:'kluky',e:'Akuzativ pl. Podmět → kluci.',en:'Accusative pl. Subject → kluci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Istanbulu žijí ␣.',w:'Turek',g:'Turks',a:['Turci'],r:'‑ek → ‑ci: pohyblivé ‑e‑ vypadává, k → c.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Istanbulu žijí ␣.',w:'Turek',g:'Turks',a:['Turci'],r:'‑ek → ‑ci: pohyblivé ‑e‑ vypadává, k → c.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Tureki',e:'Pohyblivé ‑e‑ vypadává a k → c: Turci.',en:'The fleeting ‑e‑ drops out and k → c: Turci.'},{f:'Turky',e:'Akuzativ pl. Podmět → Turci.',en:'Accusative pl. Subject → Turci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Berlíně žijí ␣.',w:'Němec',g:'Germans',a:['Němci'],r:'‑ec → ‑ci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Berlíně žijí ␣.',w:'Němec',g:'Germans',a:['Němci'],r:'‑ec → ‑ci.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Němeci',e:'Pohyblivé ‑e‑ vypadává: Němci.',en:'The fleeting ‑e‑ drops out: Němci.'},{f:'Němce',e:'Akuzativ pl. Podmět → Němci.',en:'Accusative pl. Subject → Němci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V New Yorku žijí ␣.',w:'Američan',g:'Americans',a:['Američané'],r:'Obyvatelská jména na ‑an → ‑ané.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V New Yorku žijí ␣.',w:'Američan',g:'Americans',a:['Američané'],r:'Obyvatelská jména na ‑an → ‑ané.',
  why:'Podmět v plurálu → nominativ plurálu; ‑an má spisovně ‑é.', why_en:'Plural subject → nominative plural; ‑an takes ‑é in standard Czech.',
  wrong:[{f:'Američani',e:'Spisovně Američané; ‑i je hovorové.',en:'Standard Američané; ‑i is colloquial.'},{f:'Američany',e:'Akuzativ pl. Podmět → Američané.',en:'Accusative pl. Subject → Američané.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Londýně žijí ␣.',w:'Angličan',g:'Englishmen',a:['Angličané'],r:'‑an → ‑ané.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Londýně žijí ␣.',w:'Angličan',g:'Englishmen',a:['Angličané'],r:'‑an → ‑ané.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Angličani',e:'Spisovně Angličané; ‑i je hovorové.',en:'Standard Angličané; ‑i is colloquial.'},{f:'Angličany',e:'Akuzativ pl. Podmět → Angličané.',en:'Accusative pl. Subject → Angličané.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Ve škole učí ␣.',w:'učitel',g:'teachers',a:['učitelé'],r:'‑tel → ‑telé.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Ve škole učí ␣.',w:'učitel',g:'teachers',a:['učitelé'],r:'‑tel → ‑telé.',
  why:'Podmět v plurálu → nominativ plurálu; ‑tel má ‑é.', why_en:'Plural subject → nominative plural; ‑tel takes ‑é.',
  wrong:[{f:'učiteli',e:'Nominativ pl. je učitelé; učiteli je instrumentál pl.',en:'The nominative pl. is učitelé; učiteli is instrumental pl.'},{f:'učitele',e:'Akuzativ pl. Podmět → učitelé.',en:'Accusative pl. Subject → učitelé.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Přišli moji ␣.',w:'přítel',g:'friends (m.)',a:['přátelé'],r:'Nepravidelné: přítel → přátelé.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Přišli moji ␣.',w:'přítel',g:'friends (m.)',a:['přátelé'],r:'Nepravidelné: přítel → přátelé.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'přítelé',e:'Nepravidelný kmen: přátelé.',en:'Irregular stem: přátelé.'},{f:'přátele',e:'Akuzativ pl. Podmět → přátelé.',en:'Accusative pl. Subject → přátelé.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Na náměstí jsou ␣.',w:'člověk',g:'people',a:['lidé'],r:'Nepravidelné: člověk → lidé.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Na náměstí jsou ␣.',w:'člověk',g:'people',a:['lidé'],r:'Nepravidelné: člověk → lidé.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'lidi',e:'lidi je akuzativ (hovorově i nominativ). Spisovně: lidé.',en:'lidi is accusative (colloquially also nominative). Standard: lidé.'},{f:'člověci',e:'Nepravidelné: člověk → lidé.',en:'Irregular: člověk → lidé.'}]},
-{c:'nom',s:'nom_pl_anim',q:'To jsou ␣.',w:'pán',g:'gentlemen',a:['pánové'],r:'Jednoslabičná Ma → ‑ové.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'To jsou ␣.',w:'pán',g:'gentlemen',a:['pánové'],r:'Jednoslabičná Ma → ‑ové.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'páni',e:'Spisovně pánové; páni je hovorové.',en:'Standard pánové; páni is colloquial.'},{f:'pány',e:'Akuzativ pl. Podmět → pánové.',en:'Accusative pl. Subject → pánové.'}]},
-{c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'syn',g:'sons',a:['synové'],r:'Jednoslabičná Ma → ‑ové.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'To jsou moji ␣.',w:'syn',g:'sons',a:['synové'],r:'Jednoslabičná Ma → ‑ové.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'syni',e:'syn → synové.',en:'syn → synové.'},{f:'syny',e:'Akuzativ pl. Podmět → synové.',en:'Accusative pl. Subject → synové.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V kanceláři sedí ␣.',w:'kolega',g:'colleagues',a:['kolegové'],r:'Ma na ‑a → ‑ové.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V kanceláři sedí ␣.',w:'kolega',g:'colleagues',a:['kolegové'],r:'Ma na ‑a → ‑ové.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'kolegy',e:'Akuzativ pl. Podmět → kolegové.',en:'Accusative pl. Subject → kolegové.'},{f:'kolegi',e:'Ma na ‑a má plurál ‑ové: kolegové.',en:'Ma in ‑a has the plural ‑ové: kolegové.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V létě přijíždějí ␣.',w:'turista',g:'tourists',a:['turisté'],r:'Ma na ‑ista → ‑isté.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V létě přijíždějí ␣.',w:'turista',g:'tourists',a:['turisté'],r:'Ma na ‑ista → ‑isté.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'turisti',e:'Spisovně turisté; turisti je hovorové.',en:'Standard turisté; turisti is colloquial.'},{f:'turisty',e:'Akuzativ pl. Podmět → turisté.',en:'Accusative pl. Subject → turisté.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Na svatbu přišli ␣.',w:'host',g:'guests',a:['hosté','hosti'],r:'host → hosté (i hosti).',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Na svatbu přišli ␣.',w:'host',g:'guests',a:['hosté','hosti'],r:'host → hosté (i hosti).',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'hosty',e:'Akuzativ pl. Podmět → hosté.',en:'Accusative pl. Subject → hosté.'},{f:'hostové',e:'host → hosté / hosti.',en:'host → hosté / hosti.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Naši ␣ jsou milí.',w:'soused',g:'neighbours',a:['sousedé','sousedi'],r:'soused → sousedé / sousedi.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Naši ␣ jsou milí.',w:'soused',g:'neighbours',a:['sousedé','sousedi'],r:'soused → sousedé / sousedi.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'sousedy',e:'Akuzativ pl. Podmět → sousedé.',en:'Accusative pl. Subject → sousedé.'},{f:'sousedové',e:'soused → sousedé / sousedi.',en:'soused → sousedé / sousedi.'}]},
-{c:'nom',s:'nom_pl_anim',q:'To jsou ␣.',w:'muž',g:'men',a:['muži'],r:'Ma měkké → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'To jsou ␣.',w:'muž',g:'men',a:['muži'],r:'Ma měkké → ‑i.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'muže',e:'Akuzativ pl. Podmět → muži.',en:'Accusative pl. Subject → muži.'},{f:'mužové',e:'Běžně muži; mužové je knižní.',en:'Normally muži; mužové is literary.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V nemocnici pracují ␣.',w:'lékař',g:'doctors',a:['lékaři'],r:'Ma měkké → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V nemocnici pracují ␣.',w:'lékař',g:'doctors',a:['lékaři'],r:'Ma měkké → ‑i.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'lékaře',e:'Akuzativ pl. Podmět → lékaři.',en:'Accusative pl. Subject → lékaři.'},{f:'lékařové',e:'lékař → lékaři.',en:'lékař → lékaři.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V restauraci pracují ␣.',w:'číšník',g:'waiters',a:['číšníci'],r:'k → c před ‑i: číšníci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V restauraci pracují ␣.',w:'číšník',g:'waiters',a:['číšníci'],r:'k → c před ‑i: číšníci.',
  why:'Podmět v plurálu → nominativ plurálu; k → c.', why_en:'Plural subject → nominative plural; k → c.',
  wrong:[{f:'číšníki',e:'Před ‑i se k mění na c: číšníci.',en:'Before ‑i, k changes to c: číšníci.'},{f:'číšníky',e:'Akuzativ pl. Podmět → číšníci.',en:'Accusative pl. Subject → číšníci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Přišli ␣.',w:'policista',g:'policemen',a:['policisté'],r:'Ma na ‑ista → ‑isté.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Přišli ␣.',w:'policista',g:'policemen',a:['policisté'],r:'Ma na ‑ista → ‑isté.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'policisti',e:'Spisovně policisté; ‑i je hovorové.',en:'Standard policisté; ‑i is colloquial.'},{f:'policisty',e:'Akuzativ pl. Podmět → policisté.',en:'Accusative pl. Subject → policisté.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Moskvě žijí ␣.',w:'Rus',g:'Russians',a:['Rusové'],r:'Jednoslabičná Ma → ‑ové.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Moskvě žijí ␣.',w:'Rus',g:'Russians',a:['Rusové'],r:'Jednoslabičná Ma → ‑ové.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Rusi',e:'Jednoslabičná jména mají ‑ové: Rusové.',en:'Monosyllabic names take ‑ové: Rusové.'},{f:'Rusy',e:'Akuzativ pl. Podmět → Rusové.',en:'Accusative pl. Subject → Rusové.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Ve Varšavě žijí ␣.',w:'Polák',g:'Poles',a:['Poláci'],r:'k → c před ‑i: Poláci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Ve Varšavě žijí ␣.',w:'Polák',g:'Poles',a:['Poláci'],r:'k → c před ‑i: Poláci.',
  why:'Podmět v plurálu → nominativ plurálu; k → c.', why_en:'Plural subject → nominative plural; k → c.',
  wrong:[{f:'Poláki',e:'Před ‑i se k mění na c: Poláci.',en:'Before ‑i, k changes to c: Poláci.'},{f:'Poláky',e:'Akuzativ pl. Podmět → Poláci.',en:'Accusative pl. Subject → Poláci.'}]},
 
 /* ── nom_pl_other ─────────────────────────────────────────── */
-{c:'nom',s:'nom_pl_other',q:'Na stole jsou ␣.',w:'kniha',g:'books',a:['knihy'],r:'F na ‑a → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na stole jsou ␣.',w:'kniha',g:'books',a:['knihy'],r:'F na ‑a → ‑y.',
  why:'Podmět v plurálu stojí v nominativu plurálu; F ‑a → ‑y.', why_en:'A plural subject stands in the nominative plural; F ‑a → ‑y.',
  wrong:[{f:'knihi',e:'Po h se píše tvrdé y: knihy.',en:'After h write hard y: knihy.'},{f:'knih',e:'Genitiv pl. (pět knih). Podmět: knihy.',en:'Genitive pl. (pět knih). Subject: knihy.'}]},
-{c:'nom',s:'nom_pl_other',q:'V bytě jsou dvě ␣.',w:'místnost',g:'rooms',a:['místnosti'],r:'F na ‑ost → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V bytě jsou dvě ␣.',w:'místnost',g:'rooms',a:['místnosti'],r:'F na ‑ost → ‑i.',
  why:'Po číslovce dvě stojí nominativ plurálu.', why_en:'After the numeral dvě comes the nominative plural.',
  wrong:[{f:'místnosty',e:'F na ‑ost má plurál ‑i: místnosti.',en:'F in ‑ost has the plural ‑i: místnosti.'},{f:'místností',e:'Genitiv/instrumentál. Po dvě nominativ: místnosti.',en:'Genitive/instrumental. After dvě the nominative: místnosti.'}]},
-{c:'nom',s:'nom_pl_other',q:'To jsou ␣.',w:'žena',g:'women',a:['ženy'],r:'F na ‑a → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'To jsou ␣.',w:'žena',g:'women',a:['ženy'],r:'F na ‑a → ‑y.',
  why:'Podmět po to jsou stojí v nominativu plurálu.', why_en:'The subject after to jsou stands in the nominative plural.',
  wrong:[{f:'žen',e:'Genitiv pl. Podmět → ženy.',en:'Genitive pl. Subject → ženy.'},{f:'ženu',e:'Akuzativ singuláru. Plurál: ženy.',en:'Accusative singular. Plural: ženy.'}]},
-{c:'nom',s:'nom_pl_other',q:'V centru jsou dobré ␣.',w:'restaurace',g:'restaurants',a:['restaurace'],r:'F měkký vzor: nominativ pl. = sg.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V centru jsou dobré ␣.',w:'restaurace',g:'restaurants',a:['restaurace'],r:'F měkký vzor: nominativ pl. = sg.',
  why:'Podmět v plurálu → nominativ plurálu; měkké F se nemění.', why_en:'Plural subject → nominative plural; soft F does not change.',
  wrong:[{f:'restauraci',e:'Akuzativ/lokál sg. Nominativ pl. měkkého F: restaurace.',en:'Accusative/locative sg. Nominative pl. of soft F: restaurace.'},{f:'restaurací',e:'Genitiv pl. Podmět: restaurace.',en:'Genitive pl. Subject: restaurace.'}]},
-{c:'nom',s:'nom_pl_other',q:'V pokoji jsou dvě ␣.',w:'postel',g:'beds',a:['postele'],r:'F na souhlásku (vzor píseň) → ‑e.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V pokoji jsou dvě ␣.',w:'postel',g:'beds',a:['postele'],r:'F na souhlásku (vzor píseň) → ‑e.',
  why:'Po číslovce dvě stojí nominativ plurálu.', why_en:'After the numeral dvě comes the nominative plural.',
  wrong:[{f:'posteli',e:'Lokál sg. Nominativ pl.: postele.',en:'Locative sg. Nominative pl.: postele.'},{f:'postelí',e:'Genitiv pl. Po dvě: postele.',en:'Genitive pl. After dvě: postele.'}]},
-{c:'nom',s:'nom_pl_other',q:'V budově jsou ␣.',w:'kancelář',g:'offices',a:['kanceláře'],r:'F na měkkou souhlásku → ‑e.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V budově jsou ␣.',w:'kancelář',g:'offices',a:['kanceláře'],r:'F na měkkou souhlásku → ‑e.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'kanceláři',e:'Lokál sg. Nominativ pl.: kanceláře.',en:'Locative sg. Nominative pl.: kanceláře.'},{f:'kanceláří',e:'Genitiv pl. Podmět: kanceláře.',en:'Genitive pl. Subject: kanceláře.'}]},
-{c:'nom',s:'nom_pl_other',q:'Kde jsou moje ␣?',w:'věc',g:'things',a:['věci'],r:'Vzor věc → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Kde jsou moje ␣?',w:'věc',g:'things',a:['věci'],r:'Vzor věc → ‑i.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'věce',e:'Vzor věc má plurál ‑i: věci.',en:'The věc type has the plural ‑i: věci.'},{f:'věcí',e:'Genitiv pl. Podmět: věci.',en:'Genitive pl. Subject: věci.'}]},
-{c:'nom',s:'nom_pl_other',q:'V Česku jsou hezká ␣.',w:'město',g:'towns',a:['města'],r:'N na ‑o → ‑a.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V Česku jsou hezká ␣.',w:'město',g:'towns',a:['města'],r:'N na ‑o → ‑a.',
  why:'Podmět v plurálu → nominativ plurálu; N má ‑a.', why_en:'Plural subject → nominative plural; N takes ‑a.',
  wrong:[{f:'městy',e:'Instrumentál pl. Nominativ pl. N: města.',en:'Instrumental pl. Nominative pl. N: města.'},{f:'měst',e:'Genitiv pl. (pět měst). Podmět: města.',en:'Genitive pl. (pět měst). Subject: města.'}]},
-{c:'nom',s:'nom_pl_other',q:'Na ulici stojí ␣.',w:'auto',g:'cars',a:['auta'],r:'N na ‑o → ‑a.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na ulici stojí ␣.',w:'auto',g:'cars',a:['auta'],r:'N na ‑o → ‑a.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'auty',e:'Instrumentál pl. Nominativ pl.: auta.',en:'Instrumental pl. Nominative pl.: auta.'},{f:'aut',e:'Genitiv pl. Podmět: auta.',en:'Genitive pl. Subject: auta.'}]},
-{c:'nom',s:'nom_pl_other',q:'V pokoji jsou dvě ␣.',w:'okno',g:'windows',a:['okna'],r:'N na ‑o → ‑a.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V pokoji jsou dvě ␣.',w:'okno',g:'windows',a:['okna'],r:'N na ‑o → ‑a.',
  why:'Po číslovce dvě stojí nominativ plurálu.', why_en:'After the numeral dvě comes the nominative plural.',
  wrong:[{f:'okny',e:'Instrumentál pl. Po dvě nominativ: okna.',en:'Instrumental pl. After dvě the nominative: okna.'},{f:'oken',e:'Genitiv pl. (pět oken). Po dvě: okna.',en:'Genitive pl. (pět oken). After dvě: okna.'}]},
-{c:'nom',s:'nom_pl_other',q:'V Praze jsou dvě ␣.',w:'letiště',g:'airports',a:['letiště'],r:'N měkký vzor: nominativ pl. = sg.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V Praze jsou dvě ␣.',w:'letiště',g:'airports',a:['letiště'],r:'N měkký vzor: nominativ pl. = sg.',
  why:'Po číslovce dvě stojí nominativ plurálu; měkké N se nemění.', why_en:'After dvě comes the nominative plural; soft N does not change.',
  wrong:[{f:'letišti',e:'Lokál sg. Nominativ pl.: letiště.',en:'Locative sg. Nominative pl.: letiště.'},{f:'letišť',e:'Genitiv pl. Po dvě: letiště.',en:'Genitive pl. After dvě: letiště.'}]},
-{c:'nom',s:'nom_pl_other',q:'V Praze jsou dvě hlavní ␣.',w:'nádraží',g:'stations',a:['nádraží'],r:'Vzor stavení: nominativ pl. = sg.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V Praze jsou dvě hlavní ␣.',w:'nádraží',g:'stations',a:['nádraží'],r:'Vzor stavení: nominativ pl. = sg.',
  why:'Po číslovce dvě stojí nominativ plurálu; vzor stavení se nemění.', why_en:'After dvě comes the nominative plural; the stavení type does not change.',
  wrong:[{f:'nádražích',e:'Lokál pl. Nominativ pl. = nádraží.',en:'Locative pl. Nominative pl. = nádraží.'},{f:'nádraža',e:'Vzor stavení se nemění: nádraží.',en:'The stavení type does not change: nádraží.'}]},
-{c:'nom',s:'nom_pl_other',q:'V Praze jsou zajímavá ␣.',w:'muzeum',g:'museums',a:['muzea'],r:'N na ‑um → ‑a.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V Praze jsou zajímavá ␣.',w:'muzeum',g:'museums',a:['muzea'],r:'N na ‑um → ‑a.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'muzeumy',e:'Koncovka ‑um odpadá: muzea.',en:'The ending ‑um is dropped: muzea.'},{f:'muzeí',e:'Genitiv pl. Podmět: muzea.',en:'Genitive pl. Subject: muzea.'}]},
-{c:'nom',s:'nom_pl_other',q:'V pokoji jsou dva ␣.',w:'stůl',g:'tables',a:['stoly'],r:'Mi tvrdé → ‑y; ů se krátí.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V pokoji jsou dva ␣.',w:'stůl',g:'tables',a:['stoly'],r:'Mi tvrdé → ‑y; ů se krátí.',
  why:'Po číslovce dva stojí nominativ plurálu.', why_en:'After the numeral dva comes the nominative plural.',
  wrong:[{f:'stůly',e:'ů se krátí: stoly.',en:'ů shortens: stoly.'},{f:'stolů',e:'Genitiv pl. Po dva: stoly.',en:'Genitive pl. After dva: stoly.'}]},
-{c:'nom',s:'nom_pl_other',q:'V ulici jsou nové ␣.',w:'dům',g:'houses',a:['domy'],r:'Mi tvrdé → ‑y; ů se krátí.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V ulici jsou nové ␣.',w:'dům',g:'houses',a:['domy'],r:'Mi tvrdé → ‑y; ů se krátí.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'důmy',e:'ů se krátí: domy.',en:'ů shortens: domy.'},{f:'domů',e:'Genitiv pl. Podmět: domy.',en:'Genitive pl. Subject: domy.'}]},
-{c:'nom',s:'nom_pl_other',q:'V hotelu jsou volné ␣.',w:'pokoj',g:'rooms',a:['pokoje'],r:'Mi měkké → ‑e.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V hotelu jsou volné ␣.',w:'pokoj',g:'rooms',a:['pokoje'],r:'Mi měkké → ‑e.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'pokoji',e:'Lokál sg. / instrumentál pl. Nominativ pl.: pokoje.',en:'Locative sg. / instrumental pl. Nominative pl.: pokoje.'},{f:'pokojů',e:'Genitiv pl. Podmět: pokoje.',en:'Genitive pl. Subject: pokoje.'}]},
-{c:'nom',s:'nom_pl_other',q:'Na stole jsou ␣.',w:'klíč',g:'keys',a:['klíče'],r:'Mi měkké → ‑e.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na stole jsou ␣.',w:'klíč',g:'keys',a:['klíče'],r:'Mi měkké → ‑e.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'klíči',e:'Instrumentál pl. Nominativ pl.: klíče.',en:'Instrumental pl. Nominative pl.: klíče.'},{f:'klíčů',e:'Genitiv pl. Podmět: klíče.',en:'Genitive pl. Subject: klíče.'}]},
-{c:'nom',s:'nom_pl_other',q:'Pod stromem jsou ␣.',w:'dárek',g:'presents',a:['dárky'],r:'Mi ‑ek → ‑ky (pohyblivé ‑e‑ vypadává).',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Pod stromem jsou ␣.',w:'dárek',g:'presents',a:['dárky'],r:'Mi ‑ek → ‑ky (pohyblivé ‑e‑ vypadává).',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'dáreky',e:'Pohyblivé ‑e‑ vypadává: dárky.',en:'The fleeting ‑e‑ drops out: dárky.'},{f:'dárků',e:'Genitiv pl. Podmět: dárky.',en:'Genitive pl. Subject: dárky.'}]},
-{c:'nom',s:'nom_pl_other',q:'Venku jsou ␣.',w:'dítě',g:'children',a:['děti'],r:'Nepravidelné: dítě → děti.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Venku jsou ␣.',w:'dítě',g:'children',a:['děti'],r:'Nepravidelné: dítě → děti.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'dítěta',e:'Nepravidelný plurál: děti.',en:'Irregular plural: děti.'},{f:'dětí',e:'Genitiv pl. Podmět: děti.',en:'Genitive pl. Subject: děti.'}]},
-{c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'oko',g:'eyes',a:['oči'],r:'Nepravidelné: oko → oči.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'oko',g:'eyes',a:['oči'],r:'Nepravidelné: oko → oči.',
  why:'Po bolí je bolavá část těla podmětem v nominativu.', why_en:'After bolí the aching body part is the subject in the nominative.',
  wrong:[{f:'oka',e:'Nepravidelný plurál: oči.',en:'Irregular plural: oči.'},{f:'očí',e:'Genitiv pl. Podmět: oči.',en:'Genitive pl. Subject: oči.'}]},
-{c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'ruka',g:'hands / arms',a:['ruce'],r:'Nepravidelné: ruka → ruce.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'ruka',g:'hands / arms',a:['ruce'],r:'Nepravidelné: ruka → ruce.',
  why:'Po bolí je bolavá část těla podmětem v nominativu.', why_en:'After bolí the aching body part is the subject in the nominative.',
  wrong:[{f:'ruky',e:'ruka má nepravidelný plurál ruce.',en:'ruka has the irregular plural ruce.'},{f:'rukou',e:'Genitiv/instrumentál. Podmět: ruce.',en:'Genitive/instrumental. Subject: ruce.'}]},
-{c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'noha',g:'legs / feet',a:['nohy'],r:'F na ‑a → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'noha',g:'legs / feet',a:['nohy'],r:'F na ‑a → ‑y.',
  why:'Po bolí je bolavá část těla podmětem v nominativu.', why_en:'After bolí the aching body part is the subject in the nominative.',
  wrong:[{f:'nohi',e:'Po h se píše tvrdé y: nohy.',en:'After h write hard y: nohy.'},{f:'noh',e:'Genitiv pl. Podmět: nohy.',en:'Genitive pl. Subject: nohy.'}]},
 
@@ -2326,7 +2339,7 @@ const Q = [
 {c:'loc',s:'loc_time',q:'Po ␣ jdeme spát.',w:'večeře',g:'dinner',a:['večeři'],r:'F měkké: po večeři.',
  why:'Časová následnost (po čem?): po + lokál.', why_en:'Time sequence (after what?): po + locative.',
  wrong:[{f:'večeře',e:'Nominativ/genitiv. po + lokál: večeři.',en:'Nominative/genitive. po + locative: večeři.'},{f:'večeřu',e:'F na ‑e → ‑i.',en:'F in ‑e → ‑i.'}]},
-{c:'loc',s:'loc_time',q:'O ␣ jsem byl doma.',w:'Vánoce',g:'Christmas',a:['Vánocích'],r:'o Vánocích: o + lokál plurálu.',
+{pl:1,c:'loc',s:'loc_time',q:'O ␣ jsem byl doma.',w:'Vánoce',g:'Christmas',a:['Vánocích'],r:'o Vánocích: o + lokál plurálu.',
  why:'Svátky (pl.) s předložkou o stojí v lokálu plurálu.', why_en:'Holidays (pl.) with o stand in the locative plural.',
  wrong:[{f:'Vánoce',e:'Akuzativ (na Vánoce). o + lokál: Vánocích.',en:'Accusative (na Vánoce). o + locative: Vánocích.'},{f:'Vánocech',e:'Lokál pl. je Vánocích.',en:'The locative pl. is Vánocích.'}]},
 
@@ -2751,7 +2764,7 @@ const Q = [
 {c:'ins',s:'ins_means',q:'Poslal jsem to ␣.',w:'e-mail',g:'by e-mail',a:['e-mailem'],r:'Mi → ‑em.',
  why:'Prostředek (čím?) stojí v instrumentálu bez předložky.', why_en:'Means (by what?) stands in the instrumental without a preposition.',
  wrong:[{f:'e-mailu',e:'Genitiv/dativ/lokál. Prostředek → e-mailem.',en:'Genitive/dative/locative. Means → e-mailem.'},{f:'s e-mailem',e:'Prostředek bez předložky: e-mailem.',en:'Means without a preposition: e-mailem.'}]},
-{c:'ins',s:'ins_means',q:'Zaplatím ␣.',w:'peníze',g:'in cash (with money)',a:['penězi'],r:'peníze → penězi (instrumentál pl.).',
+{pl:1,c:'ins',s:'ins_means',q:'Zaplatím ␣.',w:'peníze',g:'in cash (with money)',a:['penězi'],r:'peníze → penězi (instrumentál pl.).',
  why:'Prostředek platby (čím?) stojí v instrumentálu.', why_en:'The means of payment (by what?) stands in the instrumental.',
  wrong:[{f:'peníze',e:'Akuzativ. Prostředek → instrumentál: penězi.',en:'Accusative. Means → instrumental: penězi.'},{f:'penězma',e:'Hovorové; spisovně penězi.',en:'Colloquial; standard penězi.'}]},
 {c:'ins',s:'ins_means',q:'Krájím chléb ␣.',w:'nůž',g:'with a knife',a:['nožem'],r:'nůž → nožem (ů se krátí).',
@@ -2821,95 +2834,95 @@ const Q = [
  wrong:[{f:'ten muzeum',e:'muzeum je N (‑um) → to.',en:'muzeum is N (‑um) → to.'}]},
 
 /* ── nom_pl_adj ─────────────────────────────────────────── */
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · kamarád',g:'good friends',a:['dobří kamarádi'],r:'Ma pl.: ‑ý → ‑í, r → ř: dobří.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · kamarád',g:'good friends',a:['dobří kamarádi'],r:'Ma pl.: ‑ý → ‑í, r → ř: dobří.',
  why:'V nominativu plurálu Ma má adjektivum ‑í a mění souhlásku (r → ř).', why_en:'In the nominative plural of Ma the adjective takes ‑í and changes the consonant (r → ř).',
  wrong:[{f:'dobrí kamarádi',e:'r → ř před ‑í: dobří.',en:'r → ř before ‑í: dobří.'},{f:'dobré kamarádi',e:'‑é je pro F/Mi pl.; Ma pl. má ‑í.',en:'‑é is for F/Mi pl.; Ma pl. takes ‑í.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'nový · student',g:'new students',a:['noví studenti'],r:'Ma pl.: noví (měkké i).',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'nový · student',g:'new students',a:['noví studenti'],r:'Ma pl.: noví (měkké i).',
  why:'V nominativu plurálu Ma má adjektivum ‑í.', why_en:'In the nominative plural of Ma the adjective takes ‑í.',
  wrong:[{f:'nový studenti',e:'Ma pl. → noví.',en:'Ma pl. → noví.'},{f:'nové studenti',e:'‑é je pro Mi/F pl. Ma pl. → noví.',en:'‑é is for Mi/F pl. Ma pl. → noví.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'mladý · učitel',g:'young teachers',a:['mladí učitelé'],r:'Ma pl.: mladí (d → ď, psáno dí).',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'mladý · učitel',g:'young teachers',a:['mladí učitelé'],r:'Ma pl.: mladí (d → ď, psáno dí).',
  why:'V nominativu plurálu Ma má adjektivum ‑í.', why_en:'In the nominative plural of Ma the adjective takes ‑í.',
  wrong:[{f:'mladý učitelé',e:'Ma pl. → mladí.',en:'Ma pl. → mladí.'},{f:'mladé učitelé',e:'‑é je pro Mi/F pl. Ma pl. → mladí.',en:'‑é is for Mi/F pl. Ma pl. → mladí.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'český · student',g:'Czech students',a:['čeští studenti'],r:'český → čeští (sk → št).',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'český · student',g:'Czech students',a:['čeští studenti'],r:'český → čeští (sk → št).',
  why:'V nominativu plurálu Ma se mění souhláska: český → čeští.', why_en:'In the nominative plural of Ma the consonant changes: český → čeští.',
  wrong:[{f:'české studenti',e:'‑é je pro Mi/F pl. Ma pl. → čeští.',en:'‑é is for Mi/F pl. Ma pl. → čeští.'},{f:'čeští studenty',e:'Akuzativ pl. Podmět: čeští studenti.',en:'Accusative pl. Subject: čeští studenti.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · káva',g:'good coffees',a:['dobré kávy'],r:'F pl.: ‑é + ‑y.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · káva',g:'good coffees',a:['dobré kávy'],r:'F pl.: ‑é + ‑y.',
  why:'V nominativu plurálu F má adjektivum ‑é.', why_en:'In the nominative plural of F the adjective takes ‑é.',
  wrong:[{f:'dobří kávy',e:'‑í je jen Ma pl. F pl. → dobré.',en:'‑í is only Ma pl. F pl. → dobré.'},{f:'dobré kávi',e:'Po v se píše y: kávy.',en:'After v write y: kávy.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · pivo',g:'good beers',a:['dobrá piva'],r:'N pl.: ‑á + ‑a.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'dobrý · pivo',g:'good beers',a:['dobrá piva'],r:'N pl.: ‑á + ‑a.',
  why:'V nominativu plurálu N má adjektivum ‑á.', why_en:'In the nominative plural of N the adjective takes ‑á.',
  wrong:[{f:'dobré piva',e:'N pl. má ‑á: dobrá piva.',en:'N pl. takes ‑á: dobrá piva.'},{f:'dobrý piva',e:'‑ý je M sg. N pl. → dobrá.',en:'‑ý is M sg. N pl. → dobrá.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'malý · dítě',g:'small children',a:['malé děti'],r:'děti se v plurálu chová jako F → malé.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'malý · dítě',g:'small children',a:['malé děti'],r:'děti se v plurálu chová jako F → malé.',
  why:'děti je v plurálu F → adjektivum ‑é.', why_en:'děti is F in the plural → the adjective takes ‑é.',
  wrong:[{f:'malá děti',e:'děti není N pl.; chová se jako F → malé.',en:'děti is not N pl.; it behaves as F → malé.'},{f:'malí děti',e:'‑í je Ma pl. děti → malé.',en:'‑í is Ma pl. děti → malé.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'nový · dům',g:'new houses',a:['nové domy'],r:'Mi pl.: ‑é + ‑y.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'nový · dům',g:'new houses',a:['nové domy'],r:'Mi pl.: ‑é + ‑y.',
  why:'V nominativu plurálu Mi má adjektivum ‑é (ne ‑í jako Ma).', why_en:'In the nominative plural of Mi the adjective takes ‑é (not ‑í like Ma).',
  wrong:[{f:'noví domy',e:'‑í je jen Ma pl. Mi pl. → nové.',en:'‑í is only Ma pl. Mi pl. → nové.'},{f:'nové důmy',e:'ů se krátí: domy.',en:'ů shortens: domy.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'velký · město',g:'big towns',a:['velká města'],r:'N pl.: ‑á + ‑a.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'velký · město',g:'big towns',a:['velká města'],r:'N pl.: ‑á + ‑a.',
  why:'V nominativu plurálu N má adjektivum ‑á.', why_en:'In the nominative plural of N the adjective takes ‑á.',
  wrong:[{f:'velké města',e:'N pl. má ‑á: velká města.',en:'N pl. takes ‑á: velká města.'},{f:'velký města',e:'‑ý je M sg. N pl. → velká.',en:'‑ý is M sg. N pl. → velká.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'hlavní · nádraží',g:'main stations',a:['hlavní nádraží'],r:'Měkké adjektivum: hlavní i v plurálu.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'hlavní · nádraží',g:'main stations',a:['hlavní nádraží'],r:'Měkké adjektivum: hlavní i v plurálu.',
  why:'Měkké adjektivum má v nominativu jeden tvar pro všechny rody i čísla.', why_en:'A soft adjective has one nominative form for all genders and numbers.',
  wrong:[{f:'hlavné nádraží',e:'Měkké adjektivum má jen ‑í.',en:'A soft adjective only has ‑í.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'můj · kamarád',g:'my friends',a:['moji kamarádi','mí kamarádi'],r:'Ma pl.: moji / mí.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'můj · kamarád',g:'my friends',a:['moji kamarádi','mí kamarádi'],r:'Ma pl.: moji / mí.',
  why:'Přivlastňovací zájmeno v nominativu plurálu Ma: moji / mí.', why_en:'The possessive in the nominative plural of Ma: moji / mí.',
  wrong:[{f:'moje kamarádi',e:'Ma pl. → moji / mí; moje je F/N.',en:'Ma pl. → moji / mí; moje is F/N.'},{f:'můj kamarádi',e:'Singulár. Plurál Ma: moji.',en:'Singular. Ma plural: moji.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'můj · sestra',g:'my sisters',a:['moje sestry','mé sestry'],r:'F pl.: moje / mé.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'můj · sestra',g:'my sisters',a:['moje sestry','mé sestry'],r:'F pl.: moje / mé.',
  why:'Přivlastňovací zájmeno v nominativu plurálu F: moje / mé.', why_en:'The possessive in the nominative plural of F: moje / mé.',
  wrong:[{f:'moji sestry',e:'moji je Ma pl. F pl. → moje / mé.',en:'moji is Ma pl. F pl. → moje / mé.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'náš · soused',g:'our neighbours',a:['naši sousedé','naši sousedi'],r:'Ma pl.: naši.',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'náš · soused',g:'our neighbours',a:['naši sousedé','naši sousedi'],r:'Ma pl.: naši.',
  why:'Přivlastňovací zájmeno v nominativu plurálu Ma: naši.', why_en:'The possessive in the nominative plural of Ma: naši.',
  wrong:[{f:'naše sousedé',e:'Ma pl. → naši; naše je F/N pl.',en:'Ma pl. → naši; naše is F/N pl.'},{f:'našich sousedů',e:'Genitiv pl. Podmět: naši sousedé.',en:'Genitive pl. Subject: naši sousedé.'}]},
-{c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'ten · student',g:'those students',a:['ti studenti'],r:'ten → ti (Ma pl.).',
+{pl:1,c:'nom',s:'nom_pl_adj',q:'To jsou ␣.',w:'ten · student',g:'those students',a:['ti studenti'],r:'ten → ti (Ma pl.).',
  why:'Ukazovací zájmeno v nominativu plurálu Ma: ti.', why_en:'The demonstrative in the nominative plural of Ma: ti.',
  wrong:[{f:'ty studenti',e:'ty je pro Mi/F pl. a akuzativ; Ma pl. → ti.',en:'ty is for Mi/F pl. and the accusative; Ma pl. → ti.'},{f:'ti studenty',e:'Akuzativ pl. Podmět: ti studenti.',en:'Accusative pl. Subject: ti studenti.'}]},
 
 /* ── nom_pl_anim ─────────────────────────────────────────── */
-{c:'nom',s:'nom_pl_anim',q:'V Madridu žijí ␣.',w:'Španěl',g:'Spaniards',a:['Španělé'],r:'Španěl → Španělé.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Madridu žijí ␣.',w:'Španěl',g:'Spaniards',a:['Španělé'],r:'Španěl → Španělé.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Španěli',e:'Španěl → Španělé.',en:'Španěl → Španělé.'},{f:'Španěly',e:'Akuzativ pl. Podmět → Španělé.',en:'Accusative pl. Subject → Španělé.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Římě žijí ␣.',w:'Ital',g:'Italians',a:['Italové'],r:'Ital → Italové.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Římě žijí ␣.',w:'Ital',g:'Italians',a:['Italové'],r:'Ital → Italové.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Itali',e:'Ital → Italové.',en:'Ital → Italové.'},{f:'Italy',e:'Akuzativ pl. Podmět → Italové.',en:'Accusative pl. Subject → Italové.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Paříži žijí ␣.',w:'Francouz',g:'Frenchmen',a:['Francouzi'],r:'Ma měkké → ‑i.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Paříži žijí ␣.',w:'Francouz',g:'Frenchmen',a:['Francouzi'],r:'Ma měkké → ‑i.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Francouzové',e:'Francouz → Francouzi.',en:'Francouz → Francouzi.'},{f:'Francouze',e:'Akuzativ pl. Podmět → Francouzi.',en:'Accusative pl. Subject → Francouzi.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V Budapešti žijí ␣.',w:'Maďar',g:'Hungarians',a:['Maďaři'],r:'r → ř před ‑i: Maďaři.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V Budapešti žijí ␣.',w:'Maďar',g:'Hungarians',a:['Maďaři'],r:'r → ř před ‑i: Maďaři.',
  why:'Podmět v plurálu → nominativ plurálu; r → ř.', why_en:'Plural subject → nominative plural; r → ř.',
  wrong:[{f:'Maďari',e:'r → ř před ‑i: Maďaři.',en:'r → ř before ‑i: Maďaři.'},{f:'Maďary',e:'Akuzativ pl. Podmět → Maďaři.',en:'Accusative pl. Subject → Maďaři.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Ve Vídni žijí ␣.',w:'Rakušan',g:'Austrians',a:['Rakušané'],r:'‑an → ‑ané.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Ve Vídni žijí ␣.',w:'Rakušan',g:'Austrians',a:['Rakušané'],r:'‑an → ‑ané.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'Rakušani',e:'Spisovně Rakušané; ‑i je hovorové.',en:'Standard Rakušané; ‑i is colloquial.'},{f:'Rakušany',e:'Akuzativ pl. Podmět → Rakušané.',en:'Accusative pl. Subject → Rakušané.'}]},
-{c:'nom',s:'nom_pl_anim',q:'V divadle hrají ␣.',w:'herec',g:'actors',a:['herci'],r:'‑ec → ‑ci.',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'V divadle hrají ␣.',w:'herec',g:'actors',a:['herci'],r:'‑ec → ‑ci.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'hereci',e:'Pohyblivé ‑e‑ vypadává: herci.',en:'The fleeting ‑e‑ drops out: herci.'},{f:'herce',e:'Akuzativ pl. Podmět → herci.',en:'Accusative pl. Subject → herci.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Moji ␣ bydlí v Turecku.',w:'rodič',g:'parents',a:['rodiče'],r:'rodič → rodiče (měkké ‑e).',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Moji ␣ bydlí v Turecku.',w:'rodič',g:'parents',a:['rodiče'],r:'rodič → rodiče (měkké ‑e).',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'rodiči',e:'Instrumentál pl. Nominativ pl.: rodiče.',en:'Instrumental pl. Nominative pl.: rodiče.'},{f:'rodičů',e:'Genitiv pl. Podmět → rodiče.',en:'Genitive pl. Subject → rodiče.'}]},
-{c:'nom',s:'nom_pl_anim',q:'Petr a Jana jsou ␣.',w:'manžel',g:'husband and wife',a:['manželé'],r:'manžel → manželé (pár).',
+{pl:1,c:'nom',s:'nom_pl_anim',q:'Petr a Jana jsou ␣.',w:'manžel',g:'husband and wife',a:['manželé'],r:'manžel → manželé (pár).',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'manželi',e:'manžel → manželé.',en:'manžel → manželé.'},{f:'manžely',e:'Akuzativ pl. Podmět → manželé.',en:'Accusative pl. Subject → manželé.'}]},
 
 /* ── nom_pl_other ─────────────────────────────────────────── */
-{c:'nom',s:'nom_pl_other',q:'V lednici jsou ␣.',w:'jablko',g:'apples',a:['jablka'],r:'N ‑o → ‑a.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V lednici jsou ␣.',w:'jablko',g:'apples',a:['jablka'],r:'N ‑o → ‑a.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'jablek',e:'Genitiv pl. Podmět → jablka.',en:'Genitive pl. Subject → jablka.'},{f:'jablky',e:'Instrumentál pl. Podmět → jablka.',en:'Instrumental pl. Subject → jablka.'}]},
-{c:'nom',s:'nom_pl_other',q:'V šatně jsou ␣.',w:'kabát',g:'coats',a:['kabáty'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V šatně jsou ␣.',w:'kabát',g:'coats',a:['kabáty'],r:'Mi tvrdé → ‑y.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'kabátů',e:'Genitiv pl. Podmět → kabáty.',en:'Genitive pl. Subject → kabáty.'},{f:'kabáti',e:'Mi pl. má ‑y; ‑i je jen Ma.',en:'Mi pl. takes ‑y; ‑i is only Ma.'}]},
-{c:'nom',s:'nom_pl_other',q:'V parku jsou ␣.',w:'strom',g:'trees',a:['stromy'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'V parku jsou ␣.',w:'strom',g:'trees',a:['stromy'],r:'Mi tvrdé → ‑y.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'stromů',e:'Genitiv pl. Podmět → stromy.',en:'Genitive pl. Subject → stromy.'}]},
-{c:'nom',s:'nom_pl_other',q:'Na nebi jsou ␣.',w:'mrak',g:'clouds',a:['mraky'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na nebi jsou ␣.',w:'mrak',g:'clouds',a:['mraky'],r:'Mi tvrdé → ‑y.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'mraků',e:'Genitiv pl. Podmět → mraky.',en:'Genitive pl. Subject → mraky.'},{f:'mraci',e:'k → c platí jen u Ma (kluci). Mi: mraky.',en:'k → c applies only to Ma (kluci). Mi: mraky.'}]},
-{c:'nom',s:'nom_pl_other',q:'Na stěně jsou ␣.',w:'obraz',g:'pictures',a:['obrazy'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na stěně jsou ␣.',w:'obraz',g:'pictures',a:['obrazy'],r:'Mi tvrdé → ‑y.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'obrazů',e:'Genitiv pl. Podmět → obrazy.',en:'Genitive pl. Subject → obrazy.'}]},
-{c:'nom',s:'nom_pl_other',q:'Na nádraží stojí ␣.',w:'vlak',g:'trains',a:['vlaky'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Na nádraží stojí ␣.',w:'vlak',g:'trains',a:['vlaky'],r:'Mi tvrdé → ‑y.',
  why:'Podmět v plurálu → nominativ plurálu.', why_en:'Plural subject → nominative plural.',
  wrong:[{f:'vlaků',e:'Genitiv pl. Podmět → vlaky.',en:'Genitive pl. Subject → vlaky.'},{f:'vlaci',e:'k → c platí jen u Ma. Mi: vlaky.',en:'k → c applies only to Ma. Mi: vlaky.'}]},
-{c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'zub',g:'teeth',a:['zuby'],r:'Mi tvrdé → ‑y.',
+{pl:1,c:'nom',s:'nom_pl_other',q:'Bolí mě ␣.',w:'zub',g:'teeth',a:['zuby'],r:'Mi tvrdé → ‑y.',
  why:'Po bolí je bolavá část těla podmětem v nominativu.', why_en:'After bolí the aching body part is the subject in the nominative.',
  wrong:[{f:'zubů',e:'Genitiv pl. Podmět → zuby.',en:'Genitive pl. Subject → zuby.'}]},
 
@@ -3034,43 +3047,43 @@ const Q = [
  wrong:[{f:'pane řidiče',e:'Ma měkké má vokativ ‑i: řidiči.',en:'Soft Ma has vocative ‑i: řidiči.'},{f:'pan řidič',e:'Nominativ. Oslovení: pane řidiči.',en:'Nominative. Address: pane řidiči.'}]},
 
 /* ── voc_pl ─────────────────────────────────────────── */
-{c:'voc',s:'voc_pl',q:'␣ a pánové, vítejte!',w:'dáma',g:'ladies',a:['dámy'],r:'Vokativ plurálu = nominativ plurálu.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣ a pánové, vítejte!',w:'dáma',g:'ladies',a:['dámy'],r:'Vokativ plurálu = nominativ plurálu.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'dámo',e:'Singulár. Plurál: dámy.',en:'Singular. Plural: dámy.'},{f:'dám',e:'Genitiv pl. Oslovení: dámy.',en:'Genitive pl. Address: dámy.'}]},
-{c:'voc',s:'voc_pl',q:'Dámy a ␣, dobrý večer!',w:'pán',g:'gentlemen',a:['pánové'],r:'Vokativ plurálu = nominativ plurálu: pánové.',
+{pl:1,c:'voc',s:'voc_pl',q:'Dámy a ␣, dobrý večer!',w:'pán',g:'gentlemen',a:['pánové'],r:'Vokativ plurálu = nominativ plurálu: pánové.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'páni',e:'Spisovně pánové.',en:'Standard pánové.'},{f:'pány',e:'Akuzativ pl. Oslovení: pánové.',en:'Accusative pl. Address: pánové.'}]},
-{c:'voc',s:'voc_pl',q:'␣, pojďte sem!',w:'dítě',g:'children',a:['děti'],r:'Vokativ plurálu = nominativ plurálu: děti.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣, pojďte sem!',w:'dítě',g:'children',a:['děti'],r:'Vokativ plurálu = nominativ plurálu: děti.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'dětí',e:'Genitiv pl. Oslovení: děti.',en:'Genitive pl. Address: děti.'},{f:'dítě',e:'Singulár. Více osob: děti.',en:'Singular. Several people: děti.'}]},
-{c:'voc',s:'voc_pl',q:'Ahoj, ␣, jak se máte?',w:'kamarád',g:'friends',a:['kamarádi'],r:'Vokativ plurálu = nominativ plurálu: kamarádi.',
+{pl:1,c:'voc',s:'voc_pl',q:'Ahoj, ␣, jak se máte?',w:'kamarád',g:'friends',a:['kamarádi'],r:'Vokativ plurálu = nominativ plurálu: kamarádi.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'kamarády',e:'Akuzativ pl. Oslovení: kamarádi.',en:'Accusative pl. Address: kamarádi.'},{f:'kamaráde',e:'Singulár. Více osob: kamarádi.',en:'Singular. Several people: kamarádi.'}]},
-{c:'voc',s:'voc_pl',q:'Milí ␣, vítejte na kurzu!',w:'student',g:'students',a:['studenti'],r:'Vokativ plurálu = nominativ plurálu: studenti.',
+{pl:1,c:'voc',s:'voc_pl',q:'Milí ␣, vítejte na kurzu!',w:'student',g:'students',a:['studenti'],r:'Vokativ plurálu = nominativ plurálu: studenti.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'studenty',e:'Akuzativ pl. Oslovení: studenti.',en:'Accusative pl. Address: studenti.'},{f:'studente',e:'Singulár. Více osob: studenti.',en:'Singular. Several people: studenti.'}]},
-{c:'voc',s:'voc_pl',q:'Vážení ␣, děkujeme.',w:'host',g:'guests',a:['hosté','hosti'],r:'Vokativ plurálu = nominativ plurálu: hosté.',
+{pl:1,c:'voc',s:'voc_pl',q:'Vážení ␣, děkujeme.',w:'host',g:'guests',a:['hosté','hosti'],r:'Vokativ plurálu = nominativ plurálu: hosté.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'hosty',e:'Akuzativ pl. Oslovení: hosté.',en:'Accusative pl. Address: hosté.'}]},
-{c:'voc',s:'voc_pl',q:'␣, prosím o pozornost!',w:'kolega',g:'colleagues',a:['kolegové'],r:'Vokativ plurálu = nominativ plurálu: kolegové.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣, prosím o pozornost!',w:'kolega',g:'colleagues',a:['kolegové'],r:'Vokativ plurálu = nominativ plurálu: kolegové.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'kolego',e:'Singulár. Více osob: kolegové.',en:'Singular. Several people: kolegové.'},{f:'kolegy',e:'Akuzativ pl. Oslovení: kolegové.',en:'Accusative pl. Address: kolegové.'}]},
-{c:'voc',s:'voc_pl',q:'Milé ␣, dobrý den.',w:'kolegyně',g:'colleagues (f.)',a:['kolegyně'],r:'F pl. = sg. tvar: kolegyně.',
+{pl:1,c:'voc',s:'voc_pl',q:'Milé ␣, dobrý den.',w:'kolegyně',g:'colleagues (f.)',a:['kolegyně'],r:'F pl. = sg. tvar: kolegyně.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'kolegyň',e:'Genitiv pl. Oslovení: kolegyně.',en:'Genitive pl. Address: kolegyně.'}]},
-{c:'voc',s:'voc_pl',q:'␣, sedněte si.',w:'chlapec',g:'boys',a:['chlapci'],r:'Vokativ plurálu = nominativ plurálu: chlapci.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣, sedněte si.',w:'chlapec',g:'boys',a:['chlapci'],r:'Vokativ plurálu = nominativ plurálu: chlapci.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'chlapče',e:'Singulár. Více osob: chlapci.',en:'Singular. Several people: chlapci.'},{f:'chlapce',e:'Akuzativ pl. Oslovení: chlapci.',en:'Accusative pl. Address: chlapci.'}]},
-{c:'voc',s:'voc_pl',q:'␣, poslouchejte!',w:'holka',g:'girls',a:['holky'],r:'Vokativ plurálu = nominativ plurálu: holky.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣, poslouchejte!',w:'holka',g:'girls',a:['holky'],r:'Vokativ plurálu = nominativ plurálu: holky.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'holko',e:'Singulár. Více osob: holky.',en:'Singular. Several people: holky.'},{f:'holek',e:'Genitiv pl. Oslovení: holky.',en:'Genitive pl. Address: holky.'}]},
-{c:'voc',s:'voc_pl',q:'Drazí ␣, mám vás ráda.',w:'rodič',g:'parents',a:['rodiče'],r:'Vokativ plurálu = nominativ plurálu: rodiče.',
+{pl:1,c:'voc',s:'voc_pl',q:'Drazí ␣, mám vás ráda.',w:'rodič',g:'parents',a:['rodiče'],r:'Vokativ plurálu = nominativ plurálu: rodiče.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'rodiči',e:'Instrumentál pl. Oslovení: rodiče.',en:'Instrumental pl. Address: rodiče.'},{f:'rodičů',e:'Genitiv pl. Oslovení: rodiče.',en:'Genitive pl. Address: rodiče.'}]},
-{c:'voc',s:'voc_pl',q:'␣, děkujeme za pozornost.',w:'přítel',g:'friends (m.)',a:['přátelé'],r:'Vokativ plurálu = nominativ plurálu: přátelé.',
+{pl:1,c:'voc',s:'voc_pl',q:'␣, děkujeme za pozornost.',w:'přítel',g:'friends (m.)',a:['přátelé'],r:'Vokativ plurálu = nominativ plurálu: přátelé.',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'přítelé',e:'Nepravidelný kmen: přátelé.',en:'Irregular stem: přátelé.'},{f:'přátele',e:'Akuzativ pl. Oslovení: přátelé.',en:'Accusative pl. Address: přátelé.'}]},
-{c:'voc',s:'voc_pl',q:'Vážení ␣, vlak má zpoždění.',w:'cestující',g:'passengers',a:['cestující'],r:'cestující se nemění (adjektivní typ).',
+{pl:1,c:'voc',s:'voc_pl',q:'Vážení ␣, vlak má zpoždění.',w:'cestující',g:'passengers',a:['cestující'],r:'cestující se nemění (adjektivní typ).',
  why:'Oslovení více osob: vokativ plurálu má tvar nominativu plurálu.', why_en:'Addressing several people: the vocative plural has the nominative plural form.',
  wrong:[{f:'cestujícím',e:'Dativ/instrumentál. Oslovení: cestující.',en:'Dative/instrumental. Address: cestující.'},{f:'cestujících',e:'Genitiv/lokál. Oslovení: cestující.',en:'Genitive/locative. Address: cestující.'}]}
 ];
@@ -3081,7 +3094,8 @@ const norm = s => s.toLowerCase().trim()
   .replace(/[.,!?;:]+$/,'').replace(/\s+/g,' ');
 
 let picked = new Set(SECTIONS.map(s=>s.k));
-let shuffle = true, len = 'all', mode = 'case';
+let shuffle = true, len = 'all', mode = 'case', plural = true;   /* plural: include pl-tagged items in Smíšený / Kontrast */
+let plannedLen = 0, endedEarly = false;
 let deck = [], i = 0, right = 0, wrong = 0, streak = 0, best = 0, answered = false, log = [];
 let caseRight = 0, caseWrong = 0, casePicked = null, picks = [];
 
@@ -3103,12 +3117,13 @@ const MODE_DESC = {
 
 /* persistence — last mode / sections / length / order */
 const LS='pady-drill-v2';
-function saveState(){ try{ localStorage.setItem(LS, JSON.stringify({mode, picked:[...picked], len, shuffle})); }catch(e){} }
+function saveState(){ try{ localStorage.setItem(LS, JSON.stringify({mode, picked:[...picked], len, shuffle, plural})); }catch(e){} }
 (function loadState(){ try{
   const st=JSON.parse(localStorage.getItem(LS)||'null'); if(!st) return;
   if(['case','mix','kontrast'].includes(st.mode)) mode=st.mode;
   if(Array.isArray(st.picked)){ const p=st.picked.filter(k=>SECTIONS.some(x=>x.k===k)); if(p.length) picked=new Set(p); }
-  if(['all','40','20'].includes(String(st.len))) len=String(st.len);
+  if(st.len==='all' || /^\d+$/.test(String(st.len))) len=String(st.len);
+  if(typeof st.plural==='boolean') plural=st.plural;
   if(typeof st.shuffle==='boolean') shuffle=st.shuffle;
 }catch(e){} })();
 
@@ -3163,13 +3178,18 @@ $('#selNone').onclick = ()=>{ SECTIONS.forEach(x=>setSec(x.k,false)); refreshCas
 refreshCaseHeads();
 { const cs=CASE_ORDER.filter(c=>SECTIONS.some(x=>x.c===c)).length;
   $('#lede').textContent = Q.length+' items across '+cs+(cs===1?' case':' cases')+' of Česky krok za krokem 1 — pick whole cases or single sections below. Every item explains why the case is used and which mistakes are typical.'; }
+if(![...document.querySelectorAll('[data-len]')].some(x=>x.dataset.len===len)) len='all';   /* a stored length that is no longer a chip */
 document.querySelectorAll('.chip').forEach(c=>{
   if(c.dataset.opt==='shuffle') c.setAttribute('aria-pressed',String(shuffle));
   if(c.dataset.len) c.setAttribute('aria-pressed',String(c.dataset.len===len));
+  if(c.dataset.pl!==undefined) c.setAttribute('aria-pressed',String((c.dataset.pl==='1')===plural));
   c.onclick = ()=>{
     if(c.dataset.opt==='shuffle'){
       shuffle = c.getAttribute('aria-pressed')!=='true';
       c.setAttribute('aria-pressed',String(shuffle));
+    } else if(c.dataset.pl!==undefined){
+      plural = c.dataset.pl==='1';
+      document.querySelectorAll('[data-pl]').forEach(x=>x.setAttribute('aria-pressed',String((x.dataset.pl==='1')===plural)));
     } else {
       document.querySelectorAll('[data-len]').forEach(x=>x.setAttribute('aria-pressed','false'));
       c.setAttribute('aria-pressed','true'); len = c.dataset.len;
@@ -3186,7 +3206,8 @@ document.querySelectorAll('.mode').forEach(m=>{
   };
 });
 function pool(){
-  const p = Q.filter(q=>picked.has(q.s));
+  let p = Q.filter(q=>picked.has(q.s));
+  if(mode!=='case' && !plural) p = p.filter(q=>!q.pl);     /* plural switch applies to the mixed modes only */
   return mode==='kontrast' ? p.filter(isKontrast) : p;
 }
 function updateStartLabel(){
@@ -3198,6 +3219,11 @@ function updateStartLabel(){
   $('#startBtn').textContent = `${lab} — ${k} ${k===1?'otázka':(k<5?'otázky':'otázek')}`;
   $('#startNote').textContent = n===0 ? 'Vyber alespoň jeden okruh.' : (k<n ? 'z '+n+' vybraných' : '');
   $('#startBtn').disabled = n===0;
+  $('#plRow').classList.toggle('hidden', mode==='case');
+  if(mode!=='case'){
+    const np = Q.filter(q=>q.pl && picked.has(q.s) && (mode!=='kontrast'||isKontrast(q))).length;
+    $('#plNote').textContent = plural ? np+' položek v plurálu ve výběru' : 'vynecháno '+np+' položek v plurálu';
+  }
 }
 updateStartLabel();
 
@@ -3211,10 +3237,12 @@ $('#themeBtn').onclick = ()=>{
 
 /* start */
 $('#startBtn').onclick = ()=>start(pool());
-function start(items){
+function start(items, forceAll){
   deck = items.slice();
   if(shuffle) for(let j=deck.length-1;j>0;j--){const k=Math.random()*(j+1)|0;[deck[j],deck[k]]=[deck[k],deck[j]];}
-  if(len!=='all') deck = deck.slice(0,+len);
+  if(len!=='all' && !forceAll) deck = deck.slice(0,+len);
+  plannedLen = deck.length; endedEarly = false;
+  $('#exitBtn').classList.remove('hidden');
   i=0;right=0;wrong=0;streak=0;best=0;log=[];caseRight=0;caseWrong=0;picks=[];
   const mixed = mode!=='case';
   $('#mCase').classList.toggle('hidden', !mixed); $('#mLabT').classList.toggle('hidden', !mixed);
@@ -3426,12 +3454,12 @@ function updateBar(){
 }
 
 function finish(){
-  $('#quiz').classList.add('hidden'); $('#done').classList.remove('hidden');
+  $('#quiz').classList.add('hidden'); $('#done').classList.remove('hidden'); $('#exitBtn').classList.add('hidden');
   window.scrollTo({top:0,behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
   const pct = Math.round(right/deck.length*100);
   $('#rPct').textContent = pct+'%';
   const mixed = mode!=='case';
-  $('#rRaw').textContent = (mixed?'tvar ':'')+right+' z '+deck.length+(mixed?' · pád '+caseRight+' z '+deck.length:'')+' · nejdelší série '+best;
+  $('#rRaw').textContent = (endedEarly ? 'ukončeno po '+deck.length+' z '+plannedLen+' · ' : '')+(mixed?'tvar ':'')+right+' z '+deck.length+(mixed?' · pád '+caseRight+' z '+deck.length:'')+' · nejdelší série '+best;
   $('#rTwo').classList.toggle('hidden', !mixed);
   $('#rMatrixWrap').classList.toggle('hidden', !mixed);
   if(mixed){
@@ -3506,12 +3534,28 @@ function confusionMatrix(){
   return h+'</tbody></table>';
 }
 
-$('#againWrong').onclick = ()=>{ const w=log.map(m=>m.q); len='all'; start(w); };
-$('#againAll').onclick = ()=>{
-  $('#done').classList.add('hidden'); $('#setup').classList.remove('hidden');
+$('#againWrong').onclick = ()=>{ const w=log.map(m=>m.q); start(w, true); };
+function goHome(){
+  $('#done').classList.add('hidden'); $('#quiz').classList.add('hidden'); $('#setup').classList.remove('hidden');
+  $('#exitBtn').classList.add('hidden');
   $('#mCount').textContent='0 / 0'; $('#mRight').textContent='0'; $('#mWrong').textContent='0';
+  $('#mCaseR').textContent='0'; $('#mCaseW').textContent='0';
   $('#track').style.width='0';
+  updateStartLabel();
   window.scrollTo({top:0});
+}
+$('#againAll').onclick = goHome;
+/* ✕ in the bar: nothing answered yet → straight home; otherwise score what was done and show the results */
+$('#exitBtn').onclick = ()=>{
+  if($('#quiz').classList.contains('hidden')) return;
+  const done = right + wrong;
+  if(done===0){ goHome(); return; }
+  if(!answered && casePicked!==null){          /* drop a case pick on the unfinished item */
+    picks.pop(); if(casePicked===deck[i].c) caseRight--; else caseWrong--;
+  }
+  deck = deck.slice(0, i + (answered?1:0));
+  endedEarly = deck.length < plannedLen;
+  finish();
 };
 document.addEventListener('keydown',e=>{
   if($('#quiz').classList.contains('hidden')) return;
